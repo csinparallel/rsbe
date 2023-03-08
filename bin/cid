@@ -1,0 +1,10 @@
+#!/bin/bash
+# print container id of container with given name, default jobe
+PROG=`basename $0`
+USAGE="Usage:  $PROG [container-name]"
+
+CNAME=jobe
+test $# = 0 || CNAME="$0"
+
+docker ps -a -f name="$CNAME" -q
+

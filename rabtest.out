@@ -1,0 +1,41 @@
+Supported languages:
+    c: 11.3.0
+    cpp: 11.3.0
+    java: 18.0.2
+    nodejs: 12.22.9
+    octave: 6.4.0
+    pascal: 3.2.2
+    pdc: 11.3.0
+    php: 8.1.2
+    python3: 3.10.6
+
+Running python...
+Successful run
+
+Output:
+Message is rabtest: Hello, Jobe!
+
+
+
+Running C++
+Successful run
+
+Output:
+Hello Jobe!
+
+
+
+Running Java
+Successful run
+
+Output:
+Farewell cruel world
+
+
+
+Running PDC
+Successful run
+
+Output:
+Hello, Jobe! (PDC2)
+
