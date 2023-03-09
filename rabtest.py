@@ -35,6 +35,7 @@ int main() {
 
 
 PDC_CODE = """
+#!/bin/bash
 echo "Hello, Jobe! (PDC2)"
 """
 

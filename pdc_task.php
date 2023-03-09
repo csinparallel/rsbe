@@ -26,15 +26,23 @@ class PDC_Task extends Task {
         return array('echo 0.1', '/([0-9.]*)/');
     }
 
+    function rab_log($msg) {
+	$log = fopen("/shared/rab_log", "a");
+	fwrite($log, date("\n*** dm_hi: ") . $msg);
+	fclose($log);
+    }
+
     public function compile() {
         $this->executableFileName = $this->sourceFileName;
+#	$this->rab_log(sprintf("%o", fileperms($this->executableFileName)));	
+	chmod($this->executableFileName, "0750");
     }
 
 
     // A default name for C++ programs
     public function defaultFileName($sourcecode) {
         return 'prog';
-    }
+   }
 
 
     // The executable is the output from the compilation
