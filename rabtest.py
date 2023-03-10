@@ -168,7 +168,7 @@ def main():
     result_obj = run_test('java', JAVA_CODE, 'Blah.java')
     display_result(result_obj)
     print("\n\nRunning PDC")
-    result_obj = run_test('pdc', PDC_CODE, 'test.cpp')
+    result_obj = run_test('pdc', PDC_CODE, 'testpdc.cpp')
     display_result(result_obj)
 
 main()
