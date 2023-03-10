@@ -1,0 +1,3 @@
+OMP defined, threadct = 8
+With 1048576 trapezoids,  our estimate of the integral from 
+0.000000 to 3.141593 is 2.000000

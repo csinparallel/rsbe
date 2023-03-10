@@ -34,14 +34,8 @@ class PDC_Task extends Task {
 
     public function compile() {
         $this->executableFileName = $this->sourceFileName;
-	$this->rab_log($this->executableFileName);	
-	$this->rab_log(sprintf("%o", fileperms($this->executableFileName)));	
-	if (chmod($this->executableFileName, 0755))
- 	  $this->rab_log("chmod succeeded");
-	else
- 	  $this->rab_log("chmod failed");
-	clearstatcache();
-	$this->rab_log(sprintf("%o", fileperms($this->executableFileName)));
+#	$this->rab_log($this->executableFileName);	
+	chmod($this->executableFileName, 0755);
     }
 
 
