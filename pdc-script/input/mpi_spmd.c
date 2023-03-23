@@ -1,5 +1,5 @@
 sta
-mpi_spmd 959 spmd.c mpicc -Wall spmd.c -o spmd
+mpi_spmd 989 spmd.c mpicc -Wall spmd.c -o spmd
 mpirun -map-by node -np 4 ./spmd
 /* spmd.c
  * ... illustrates the single program multiple data
@@ -19,7 +19,7 @@ mpirun -map-by node -np 4 ./spmd
  */
 
 #include <stdio.h>   // printf()
-#include <mpi.h>     // MPI functions
+#include "/usr/lib/openmpi-4.1.5/include/mpi.h"     // MPI functions
 
 int main(int argc, char** argv) {
     int id = -1, numProcesses = -1, length = -1;
