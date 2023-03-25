@@ -1,4 +1,4 @@
-standalone: attempt to build failed: mpicc -Wall spmd.c -o spmd
-Contents of subdirectory mpi_spmd:
-total 4
--rw-rw-r-- 1 rab rab 959 Mar 10 14:48 spmd.c
+Greetings from process #0 of 4 on 834f615d6aea
+Greetings from process #1 of 4 on 834f615d6aea
+Greetings from process #2 of 4 on 834f615d6aea
+Greetings from process #3 of 4 on 834f615d6aea
