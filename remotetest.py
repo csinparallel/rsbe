@@ -19,7 +19,12 @@ import http.client
 API_KEY = '2AAA7A5415B4A9B394B54BF1D2E9D'  # A working (100/hr) key on Jobe2
 USE_API_KEY = True
 #JOBE_SERVER = 'jobe2.cosc.canterbury.ac.nz'
-JOBE_SERVER = 'localhost:4000'
+try:
+    with open('.jobeport', 'r') as file:
+        JOBE_PORT = file.read().rstrip()
+except:
+    JOBE_PORT = '4000'
+JOBE_SERVER = 'localhost:' + JOBE_PORT
 
 PYTHON_CODE = """
 MESSAGE = 'rabtest: Hello, Jobe!'
