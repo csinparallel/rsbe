@@ -44,14 +44,9 @@ def http_request(method, resource, data, headers):
 
 
 
-def run_test(language, code, filename):
-    '''Execute the given code in the given language.
+def run_test(runspec):
+    '''Execute the runspec
        Return the result object.'''
-    runspec = {
-        'language_id': language,
-        'sourcefilename': filename,
-        'sourcecode': code,
-    }
 
     resource = '/jobe/index.php/restapi/runs/'
     data = json.dumps({ 'run_spec' : runspec })
@@ -141,12 +136,20 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning C++")
-    result_obj = run_test('cpp', CPP_CODE, 'test.cpp')
+    print("\n\nRunning C++ (2)")
+    result_obj = run_test({
+        'language_id': 'cpp',
+        'sourcefilename': 'test.cpp',
+        'sourcecode': CPP_CODE
+    })
     display_result(result_obj)
 
     print("\n\nRunning PDC")
-    result_obj = run_test('pdc', PDC_CODE, 'testpdc.cpp')
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'testpdc.cpp',
+        'sourcecode': PDC_CODE
+    })
     display_result(result_obj)
 
 main()
