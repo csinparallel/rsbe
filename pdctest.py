@@ -129,6 +129,7 @@ def display_result(ro):
 
 def main():
     '''Demo or get languages, a run of C++ then PDC'''
+    print("Jobe server:  " + JOBE_SERVER)
     print("Supported languages:")
     resource = '/jobe/index.php/restapi/languages'
     lang_versions = do_http('GET', resource)
