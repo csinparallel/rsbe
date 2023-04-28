@@ -21,11 +21,10 @@ class PDC_Task extends Task {
 	'mpi4py',
 	'nvcc',
 	'nvcc++',
-	'pgcc'
+	'pgcc',
     );
-    public $compiler_index;  /* use index to avoid injection attack */
-    public $scriptDir = "/shared/pdc-script";
-    public $scriptFileName = "standalone";
+    public $cpl_index;  /* use index to avoid injection attack */
+    public $script = "/shared/pdc-script/standalone";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
@@ -46,14 +45,22 @@ class PDC_Task extends Task {
         return array('echo 0.1', '/([0-9.]*)/');
     }
 
+    public function get_cpl_index($string = NULL) {
+    	if (is_null($string))
+	    $string = $this->getParam('compiler');
+	return  array_search($string, $this->supported_compilers);
+    }
+
     public function compile() {
-        $this->executableFileName = $this->sourceFileName;
-//	$this->rab_log($this->scriptDir . " " . $this->scriptFileName);	
-	$this->rab_log('compiler = ' . $this->getParam('compiler', true));
-	$this->compiler_index = array_search($this->getParam('compiler'),
-			                     $this->supported_compilers);	
-	$this->rab_log('compiler_index = ' . strval($this->compiler_index));
-	chmod($this->executableFileName, 0755);
+        $this->executableFileName = $this->script;
+	$this->rab_log($this->script);	
+	$this->rab_log('compiler = ' . $this->getParam('compiler'));
+	$this->cpl_index = $this->get_cpl_index();	
+	$this->rab_log('cpl_index = ' . $this->cpl_index);
+	$this->rab_log('sourceFileName = ' . $this->sourceFileName);
+	$this->rab_log(implode(' ', $this->getRunCommand()));
+//	$this->rab_log(file_get_contents($this->sourceFileName));
+//	chmod($this->executableFileName, 0755);
     }
 
 
@@ -65,7 +72,7 @@ class PDC_Task extends Task {
 
     // The executable is the output from the compilation
     public function getExecutablePath() {
-        return "./" . $this->executableFileName;
+        return $this->script;
     }
 
 

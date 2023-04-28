@@ -1,3 +1,4 @@
+Jobe server:  localhost:4001
 Supported languages:
     c: 11.3.0
     cpp: 11.3.0
@@ -20,8 +21,16 @@ Hello Jobe!
 
 
 Running PDC
-Successful run
+Runtime error
 
 Output:
-Hello, Jobe! (PDC2)
+OMP defined, threadct = 8
+With 1048576 trapezoids,  our estimate of the integral from 
+0.000000 to 3.141593 is 2.000000
+
+
+Error output:
+1108+0 records in
+1108+0 records out
+1108 bytes (1.1 kB, 1.1 KiB) copied, 0.00430562 s, 257 kB/s
 
