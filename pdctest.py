@@ -55,6 +55,7 @@ def run_test(runspec):
 
     resource = '/jobe/index.php/restapi/runs/'
     data = json.dumps({ 'run_spec' : runspec })
+    print(data)
     response = None
     content = ''
     result = do_http('POST', resource, data)
@@ -154,7 +155,8 @@ def main():
     result_obj = run_test({
         'language_id': 'pdc',
         'sourcefilename': 'testpdc.cpp',
-        'sourcecode': PDC_CODE
+        'sourcecode': PDC_CODE,
+        'parameters': {'compiler': 'nvcc'}
     })
     display_result(result_obj)
 
