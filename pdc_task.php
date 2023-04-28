@@ -53,14 +53,8 @@ class PDC_Task extends Task {
 
     public function compile() {
         $this->executableFileName = $this->script;
-	$this->rab_log($this->script);	
-	$this->rab_log('compiler = ' . $this->getParam('compiler'));
 	$this->cpl_index = $this->get_cpl_index();	
 	$this->rab_log('cpl_index = ' . $this->cpl_index);
-	$this->rab_log('sourceFileName = ' . $this->sourceFileName);
-	$this->rab_log(implode(' ', $this->getRunCommand()));
-//	$this->rab_log(file_get_contents($this->sourceFileName));
-//	chmod($this->executableFileName, 0755);
     }
 
 
