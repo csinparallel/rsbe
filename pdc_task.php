@@ -17,11 +17,11 @@ class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
-	'mpi',
-	'mpi4py',
-	'nvcc',
-	'nvcc++',
-	'pgcc',
+//	'mpi',
+//	'mpi4py',
+//	'nvcc',
+//	'nvcc++',
+//	'pgcc',
     );
     public $cpl_index;  /* use index to avoid injection attack */
     public $script = "/shared/pdc-script/standalone";
@@ -34,9 +34,15 @@ class PDC_Task extends Task {
 
     public function __construct($filename, $input, $params) {
         parent::__construct($filename, $input, $params);
-//	$this->rab_log('[' . implode('   ', $this->params) . ']');	
+//	$this->rab_log('[' . implode('   ', $this->params) . ']');
+//	$this->rab_log(print_r($this->params, true)); 
+	foreach ($this->params as $key => $val)
+	    if ($key != "compiler") {
+	        $this->params["pdc_" . $key] = $val ;
+		unset($this->params[$key]); }
+//	$this->rab_log(print_r($this->params, true)); 
         $this->default_params['compiler'] = 'g++';
-        $this->default_params['compileargs'] = array(
+        $this->default_params['pdc_compileargs'] = array(
             '-Wall',
             '-Werror');
     }
