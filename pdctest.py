@@ -55,7 +55,6 @@ def run_test(runspec):
 
     resource = '/jobe/index.php/restapi/runs/'
     data = json.dumps({ 'run_spec' : runspec })
-    print(data)
     response = None
     content = ''
     result = do_http('POST', resource, data)

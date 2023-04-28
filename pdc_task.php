@@ -34,10 +34,8 @@ class PDC_Task extends Task {
     }
 
     public function __construct($filename, $input, $params) {
-//	$this->rab_log('[' . implode('   ', $params) . ']');	
         parent::__construct($filename, $input, $params);
-	$this->rab_log('[' . implode('   ', $this->params) . ']');	
-	$this->rab_log('[' . implode('   ', $params) . ']');	
+//	$this->rab_log('[' . implode('   ', $this->params) . ']');	
         $this->default_params['compiler'] = 'g++';
         $this->default_params['compileargs'] = array(
             '-Wall',
@@ -52,12 +50,6 @@ class PDC_Task extends Task {
         $this->executableFileName = $this->sourceFileName;
 //	$this->rab_log($this->scriptDir . " " . $this->scriptFileName);	
 	$this->rab_log('compiler = ' . $this->getParam('compiler', true));
-	if (isset($this->params))  // DEBUG
-	    $this->rab_log(count($this->params));
-	else
-	    $this->rab_log('$this->params not set!');
-	$this->rab_log('compileargs = ' . implode('  ', $this->getParam('compileargs')));	
-//	$this->rab_log('[' . $this->params . ']');	
 	$this->compiler_index = array_search($this->getParam('compiler'),
 			                     $this->supported_compilers);	
 	$this->rab_log('compiler_index = ' . strval($this->compiler_index));
