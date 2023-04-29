@@ -23,7 +23,43 @@ class PDC_Task extends Task {
 //	'nvcc++',
 //	'pgcc',
     );
+
+    public $pdc_default_params = array(
+        'g++' => array(
+            'pdc_compileargs' => array(
+                '-Wall',
+                '-Werror',
+    	    ),
+    	),
+    
+        'gcc' => array(
+            'pdc_compileargs' => array(
+                '-Wall',
+                '-Werror',
+		'-std=c99',
+    	    ),
+    	),
+    
+        'mpi' => array(
+            'pdc_interpreter' => 'mpirun',
+    	),
+    	
+        'mpi4py' => array(
+    	),
+    	
+        'nvcc' => array(
+    	),
+    	
+        'nvcc++' => array(
+    	),
+    	
+        'pgcc' => array(
+    	),
+    	
+    );
+	
     public $cpl_index;  /* use index to avoid injection attack */
+    public $cpl;  /* compiler */
     public $script = "/shared/pdc-script/standalone";
     
     function rab_log($msg) {
@@ -35,16 +71,19 @@ class PDC_Task extends Task {
     public function __construct($filename, $input, $params) {
         parent::__construct($filename, $input, $params);
 //	$this->rab_log('[' . implode('   ', $this->params) . ']');
-//	$this->rab_log(print_r($this->params, true)); 
+	$this->rab_log('$this->pdc_default_params start'); 
+	$this->rab_log(print_r($this->pdc_default_params, true)); 
+	$this->rab_log('$this->pdc_default_params end'); 
+	$this->rab_log(print_r($this->params, true)); 
 	foreach ($this->params as $key => $val)
 	    if ($key != "compiler") {
 	        $this->params["pdc_" . $key] = $val ;
 		unset($this->params[$key]); }
-//	$this->rab_log(print_r($this->params, true)); 
+	$this->rab_log(print_r($this->params, true)); 
         $this->default_params['compiler'] = 'g++';
-        $this->default_params['pdc_compileargs'] = array(
-            '-Wall',
-            '-Werror');
+	foreach ($this->pdc_default_params[$this->getParam('compiler')] as $key => $val)
+	    $this->default_params[$key] = $val;
+	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true)); 
     }
 
     public static function getVersionCommand() {
@@ -59,6 +98,8 @@ class PDC_Task extends Task {
 
     public function compile() {
         $this->executableFileName = $this->script;
+	$this->cpl = $this->getParam('compiler');
+	$this->rab_log('cpl = ' . $this->cpl);
 	$this->cpl_index = $this->get_cpl_index();	
 	$this->rab_log('cpl_index = ' . $this->cpl_index);
     }
@@ -66,7 +107,7 @@ class PDC_Task extends Task {
 
     // A default name for C++ programs
     public function defaultFileName($sourcecode) {
-        return 'prog';
+        return 'SCRIPT_TARGET';
    }
 
 

@@ -202,7 +202,10 @@ def main():
         'language_id': 'pdc',
         'sourcefilename': 'testpdc',
         'sourcecode': PDC_CODE,
-        'parameters': {'compiler': 'nvcc', 'try': ['8', '6'] },
+        'parameters': {
+            'compiler': 'gcc',
+#            'try': ['8', '6'],
+        },
     })
     display_result(result_obj)
 
