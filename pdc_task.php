@@ -36,7 +36,6 @@ class PDC_Task extends Task {
             'pdc_compileargs' => array(
                 '-Wall',
                 '-Werror',
-		'-std=c99',
     	    ),
     	),
     
@@ -58,7 +57,6 @@ class PDC_Task extends Task {
     	
     );
 	
-    public $cpl_index;  /* use index to avoid injection attack */
     public $cpl;  /* compiler */
     public $script = "/shared/pdc-script/standalone";
     
@@ -70,38 +68,29 @@ class PDC_Task extends Task {
 
     public function __construct($filename, $input, $params) {
         parent::__construct($filename, $input, $params);
-//	$this->rab_log('[' . implode('   ', $this->params) . ']');
-	$this->rab_log('$this->pdc_default_params start'); 
-	$this->rab_log(print_r($this->pdc_default_params, true)); 
-	$this->rab_log('$this->pdc_default_params end'); 
-	$this->rab_log(print_r($this->params, true)); 
+//	$this->rab_log(print_r($this->params, true)); 
 	foreach ($this->params as $key => $val)
 	    if ($key != "compiler") {
 	        $this->params["pdc_" . $key] = $val ;
 		unset($this->params[$key]); }
-	$this->rab_log(print_r($this->params, true)); 
         $this->default_params['compiler'] = 'g++';
-	foreach ($this->pdc_default_params[$this->getParam('compiler')] as $key => $val)
+	
+	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
+
+	foreach ($this->pdc_default_params[$this->getParam('compiler')]
+		as $key => $val)
 	    $this->default_params[$key] = $val;
-	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true)); 
+//	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true)); 
     }
 
     public static function getVersionCommand() {
         return array('echo 0.1', '/([0-9.]*)/');
     }
 
-    public function get_cpl_index($string = NULL) {
-    	if (is_null($string))
-	    $string = $this->getParam('compiler');
-	return  array_search($string, $this->supported_compilers);
-    }
-
     public function compile() {
         $this->executableFileName = $this->script;
 	$this->cpl = $this->getParam('compiler');
 	$this->rab_log('cpl = ' . $this->cpl);
-	$this->cpl_index = $this->get_cpl_index();	
-	$this->rab_log('cpl_index = ' . $this->cpl_index);
     }
 
 
