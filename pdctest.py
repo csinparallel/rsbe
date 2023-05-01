@@ -29,10 +29,7 @@ int main() {
 """
 
 
-PDC_CODE = r"""sta
-example1 1108 trap-omp.c gcc -o trap-omp trap-omp.c -lm -fopenmp
-./trap-omp 8
-#include <math.h>
+PDC_CODE = r"""#include <math.h>
 #include <stdio.h>    // printf()
 #include <stdlib.h>   // atoi()
 #include <omp.h>      // OpenMP
@@ -200,11 +197,10 @@ def main():
     print("\n\nRunning PDC")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'testpdc',
+        'sourcefilename': 'trap-omp.c',
         'sourcecode': PDC_CODE,
         'parameters': {
             'compiler': 'gcc',
-#            'try': ['8', '6'],
         },
     })
     display_result(result_obj)

@@ -17,7 +17,8 @@ class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
-//	'mpi',
+//	'mpicc',
+//	'mpic++',
 //	'mpi4py',
 //	'nvcc',
 //	'nvcc++',
@@ -26,6 +27,7 @@ class PDC_Task extends Task {
 
     public $pdc_default_params = array(
         'g++' => array(
+	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_compileargs' => array(
                 '-Wall',
                 '-Werror',
@@ -33,32 +35,43 @@ class PDC_Task extends Task {
     	),
     
         'gcc' => array(
+	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_compileargs' => array(
                 '-Wall',
                 '-Werror',
     	    ),
     	),
     
-        'mpi' => array(
+        'mpicc' => array(
+	    'pdc_sourcefilename' => 'prog.c', 
+            'pdc_interpreter' => 'mpirun',
+    	),
+    	
+        'mpic++' => array(
+	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_interpreter' => 'mpirun',
     	),
     	
         'mpi4py' => array(
+	    'pdc_sourcefilename' => 'prog.py', 
     	),
     	
         'nvcc' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
     	),
     	
         'nvcc++' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
     	),
     	
         'pgcc' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
     	),
     	
     );
 	
     public $cpl;  /* compiler */
-    public $script = "/shared/pdc-script/standalone";
+    public $script= "/shared/pdc-script/standalone";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
@@ -68,12 +81,17 @@ class PDC_Task extends Task {
 
     public function __construct($filename, $input, $params) {
         parent::__construct($filename, $input, $params);
-//	$this->rab_log(print_r($this->params, true)); 
+//	$this->rab_log(print_r($this->params, true));
+	$this->params['sourcefilename'] = $this->sourceFileName;
+	$this->sourceFileName = $this->defaultFileName(''); 
 	foreach ($this->params as $key => $val)
 	    if ($key != "compiler") {
 	        $this->params["pdc_" . $key] = $val ;
 		unset($this->params[$key]); }
+	$this->rab_log(print_r($this->params, true));
         $this->default_params['compiler'] = 'g++';
+        $this->default_params['pdc_runargs'] = '';
+        $this->default_params['pdc_compilerargs'] = '';
 	
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
@@ -88,15 +106,34 @@ class PDC_Task extends Task {
     }
 
     public function compile() {
+//        $code = file_get_contents($this->defaultFileName(''));
+//	$this->rab_log($code);
+	$this->rab_log($this->sourceFileName);
         $this->executableFileName = $this->script;
 	$this->cpl = $this->getParam('compiler');
 	$this->rab_log('cpl = ' . $this->cpl);
+	// add error checking for the following
+	$code = file_get_contents($this->sourceFileName);
+	$pdc = array(
+	    'codelen' => strval(strlen($code)),
+	    'executable' => basename($this->sourceFileName, '.c'),
+	);
+	foreach (array('sourcefilename', 'compileargs', 'runargs')
+		 as $key) 
+	    $pdc[$key] = $this->getParam("pdc_$key");
+	$this->rab_log(print_r($pdc, true)); 
+	$tgt = fopen($this->getTargetFile(), "w");
+	fwrite($tgt, "sta\n");
+	fwrite($tgt, "example1 " . strval(strlen($code)) . " $pdc[sourcefilename] gcc -o trap-omp trap-omp.c -lm -fopenmp\n");
+	fwrite($tgt, "./trap-omp 8\n");
+	fwrite($tgt, $code);
+	fclose($tgt);
     }
 
 
-    // A default name for C++ programs
+    // A default name for PDC script files
     public function defaultFileName($sourcecode) {
-        return 'SCRIPT_TARGET';
+        return 'SOURCE_CODE';
    }
 
 
@@ -107,6 +144,6 @@ class PDC_Task extends Task {
 
 
     public function getTargetFile() {
-        return $this->sourceFileName;
+        return 'SCRIPT_INPUT';
     }
 };
