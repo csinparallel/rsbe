@@ -28,7 +28,7 @@ class PDC_Task extends Task {
     public $pdc_default_params = array(
         'g++' => array(
 	    'pdc_sourcefilename' => 'prog.cpp', 
-            'pdc_compileargs' => array(
+            'pdc_autocompileargs' => array(
                 '-Wall',
                 '-Werror',
     	    ),
@@ -36,7 +36,7 @@ class PDC_Task extends Task {
     
         'gcc' => array(
 	    'pdc_sourcefilename' => 'prog.c', 
-            'pdc_compileargs' => array(
+            'pdc_autocompileargs' => array(
                 '-Wall',
                 '-Werror',
     	    ),
@@ -90,11 +90,13 @@ class PDC_Task extends Task {
 		unset($this->params[$key]); }
 	$this->rab_log(print_r($this->params, true));
         $this->default_params['compiler'] = 'g++';
-        $this->default_params['pdc_runargs'] = '';
-        $this->default_params['pdc_compilerargs'] = '';
 	
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
+	foreach(array('compileargs', 'autocompileargs',
+		      'interpreter', 'interpreterargs',
+		      'runargs') as $name)
+	    $this->default_params["pdc_$name"] = '';
 	foreach ($this->pdc_default_params[$this->getParam('compiler')]
 		as $key => $val)
 	    $this->default_params[$key] = $val;
@@ -122,6 +124,7 @@ class PDC_Task extends Task {
 		 as $key) 
 	    $pdc[$key] = $this->getParam("pdc_$key");
 	$this->rab_log(print_r($pdc, true)); 
+
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, "sta\n");
 	fwrite($tgt, implode(" ", array(
@@ -129,11 +132,13 @@ class PDC_Task extends Task {
 			 "$pdc[codelen] $pdc[sourcefilename]", 
  			 "$this->cpl",
 			 "-o $pdc[executable]",
+//			 "$pdc[autocompileargs]",
 			 "$pdc[sourcefilename]",
 		   	 "$pdc[compileargs]\n")));
 	fwrite($tgt, "./$pdc[executable] $pdc[runargs]\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
+
     }
 
 
