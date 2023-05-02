@@ -17,15 +17,61 @@ class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
-	'mpi',
-	'mpi4py',
-	'nvcc',
-	'nvcc++',
-	'pgcc'
+//	'mpicc',
+//	'mpic++',
+//	'mpi4py',
+//	'nvcc',
+//	'nvcc++',
+//	'pgcc',
     );
-    public $compiler_index;  /* use index to avoid injection attack */
-    public $scriptDir = "/shared/pdc-script";
-    public $scriptFileName = "standalone";
+
+    public $pdc_default_params = array(
+        'g++' => array(
+	    'pdc_sourcefilename' => 'prog.cpp', 
+            'pdc_compileargs' => array(
+                '-Wall',
+                '-Werror',
+    	    ),
+    	),
+    
+        'gcc' => array(
+	    'pdc_sourcefilename' => 'prog.c', 
+            'pdc_compileargs' => array(
+                '-Wall',
+                '-Werror',
+    	    ),
+    	),
+    
+        'mpicc' => array(
+	    'pdc_sourcefilename' => 'prog.c', 
+            'pdc_interpreter' => 'mpirun',
+    	),
+    	
+        'mpic++' => array(
+	    'pdc_sourcefilename' => 'prog.cpp', 
+            'pdc_interpreter' => 'mpirun',
+    	),
+    	
+        'mpi4py' => array(
+	    'pdc_sourcefilename' => 'prog.py', 
+    	),
+    	
+        'nvcc' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
+    	),
+    	
+        'nvcc++' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
+    	),
+    	
+        'pgcc' => array(
+	    'pdc_sourcefilename' => 'prog.cu', 
+    	),
+    	
+    );
+	
+    public $cpl;  /* compiler */
+    public $script= "/shared/pdc-script/standalone";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
@@ -35,11 +81,24 @@ class PDC_Task extends Task {
 
     public function __construct($filename, $input, $params) {
         parent::__construct($filename, $input, $params);
-//	$this->rab_log('[' . implode('   ', $this->params) . ']');	
+//	$this->rab_log(print_r($this->params, true));
+	$this->params['sourcefilename'] = $this->sourceFileName;
+	$this->sourceFileName = $this->defaultFileName(''); 
+	foreach ($this->params as $key => $val)
+	    if ($key != "compiler") {
+	        $this->params["pdc_" . $key] = $val ;
+		unset($this->params[$key]); }
+	$this->rab_log(print_r($this->params, true));
         $this->default_params['compiler'] = 'g++';
-        $this->default_params['compileargs'] = array(
-            '-Wall',
-            '-Werror');
+        $this->default_params['pdc_runargs'] = '';
+        $this->default_params['pdc_compilerargs'] = '';
+	
+	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
+
+	foreach ($this->pdc_default_params[$this->getParam('compiler')]
+		as $key => $val)
+	    $this->default_params[$key] = $val;
+//	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true)); 
     }
 
     public static function getVersionCommand() {
@@ -47,29 +106,50 @@ class PDC_Task extends Task {
     }
 
     public function compile() {
-        $this->executableFileName = $this->sourceFileName;
-//	$this->rab_log($this->scriptDir . " " . $this->scriptFileName);	
-	$this->rab_log('compiler = ' . $this->getParam('compiler', true));
-	$this->compiler_index = array_search($this->getParam('compiler'),
-			                     $this->supported_compilers);	
-	$this->rab_log('compiler_index = ' . strval($this->compiler_index));
-	chmod($this->executableFileName, 0755);
+//        $code = file_get_contents($this->defaultFileName(''));
+//	$this->rab_log($code);
+	$this->rab_log($this->sourceFileName);
+        $this->executableFileName = $this->script;
+	$this->cpl = $this->getParam('compiler');
+	$this->rab_log('cpl = ' . $this->cpl);
+	// add error checking for the following
+	$code = file_get_contents($this->sourceFileName);
+	$pdc = array(
+	    'codelen' => strval(strlen($code)),
+	    'executable' => basename($this->sourceFileName, '.c'),
+	);
+	foreach (array('sourcefilename', 'compileargs', 'runargs')
+		 as $key) 
+	    $pdc[$key] = $this->getParam("pdc_$key");
+	$this->rab_log(print_r($pdc, true)); 
+	$tgt = fopen($this->getTargetFile(), "w");
+	fwrite($tgt, "sta\n");
+	fwrite($tgt, implode(" ", array(
+		         "example1",
+			 "$pdc[codelen] $pdc[sourcefilename]", 
+ 			 "$this->cpl",
+			 "-o $pdc[executable]",
+			 "$pdc[sourcefilename]",
+		   	 "$pdc[compileargs]\n")));
+	fwrite($tgt, "./$pdc[executable] $pdc[runargs]\n");
+	fwrite($tgt, $code);
+	fclose($tgt);
     }
 
 
-    // A default name for C++ programs
+    // A default name for PDC script files
     public function defaultFileName($sourcecode) {
-        return 'prog';
+        return 'SOURCE_CODE';
    }
 
 
     // The executable is the output from the compilation
     public function getExecutablePath() {
-        return "./" . $this->executableFileName;
+        return $this->script;
     }
 
 
     public function getTargetFile() {
-        return $this->sourceFileName;
+        return 'SCRIPT_INPUT';
     }
 };
