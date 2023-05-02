@@ -201,6 +201,8 @@ def main():
         'sourcecode': PDC_CODE,
         'parameters': {
             'compiler': 'gcc',
+            'runargs' : '8',
+            'compileargs': '-lm -fopenmp', 
         },
     })
     display_result(result_obj)

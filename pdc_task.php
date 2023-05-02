@@ -124,8 +124,14 @@ class PDC_Task extends Task {
 	$this->rab_log(print_r($pdc, true)); 
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, "sta\n");
-	fwrite($tgt, "example1 " . strval(strlen($code)) . " $pdc[sourcefilename] gcc -o trap-omp trap-omp.c -lm -fopenmp\n");
-	fwrite($tgt, "./trap-omp 8\n");
+	fwrite($tgt, implode(" ", array(
+		         "example1",
+			 "$pdc[codelen] $pdc[sourcefilename]", 
+ 			 "$this->cpl",
+			 "-o $pdc[executable]",
+			 "$pdc[sourcefilename]",
+		   	 "$pdc[compileargs]\n")));
+	fwrite($tgt, "./$pdc[executable] $pdc[runargs]\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
     }
