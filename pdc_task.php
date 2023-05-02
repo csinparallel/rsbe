@@ -120,9 +120,9 @@ class PDC_Task extends Task {
 	    'codelen' => strval(strlen($code)),
 	    'executable' => basename($this->sourceFileName, '.c'),
 	);
-	foreach (array('sourcefilename', 'compileargs', 'runargs')
-		 as $key) 
-	    $pdc[$key] = $this->getParam("pdc_$key");
+	foreach (array_keys($this->default_params) as $key)
+	    if (substr($key, 0, 4) == "pdc_")
+	        $pdc[substr($key,4)] = $this->getParam($key);
 	$this->rab_log(print_r($pdc, true)); 
 
 	$tgt = fopen($this->getTargetFile(), "w");

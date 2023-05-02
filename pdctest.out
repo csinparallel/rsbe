@@ -20,7 +20,7 @@ Hello Jobe!
 
 
 
-Running PDC
+Running PDC/gcc
 Runtime error
 
 Output:
@@ -32,5 +32,20 @@ With 1048576 trapezoids,  our estimate of the integral from
 Error output:
 1109+0 records in
 1109+0 records out
-1109 bytes (1.1 kB, 1.1 KiB) copied, 0.00430344 s, 258 kB/s
+1109 bytes (1.1 kB, 1.1 KiB) copied, 0.00430517 s, 258 kB/s
+
+
+
+Running PDC/g++
+Runtime error
+
+Output:
+OMP defined, threadct = 8
+With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
+
+
+Error output:
+1198+0 records in
+1198+0 records out
+1198 bytes (1.2 kB, 1.2 KiB) copied, 0.00467331 s, 256 kB/s
 
