@@ -28,7 +28,7 @@ class PDC_Task extends Task {
     public $pdc_default_params = array(
         'g++' => array(
 	    'pdc_sourcefilename' => 'prog.cpp', 
-            'pdc_compileargs' => array(
+            'pdc_autocompileargs' => array(
                 '-Wall',
                 '-Werror',
     	    ),
@@ -36,7 +36,7 @@ class PDC_Task extends Task {
     
         'gcc' => array(
 	    'pdc_sourcefilename' => 'prog.c', 
-            'pdc_compileargs' => array(
+            'pdc_autocompileargs' => array(
                 '-Wall',
                 '-Werror',
     	    ),
@@ -88,27 +88,32 @@ class PDC_Task extends Task {
 	    if ($key != "compiler") {
 	        $this->params["pdc_" . $key] = $val ;
 		unset($this->params[$key]); }
-	$this->rab_log(print_r($this->params, true));
         $this->default_params['compiler'] = 'g++';
-        $this->default_params['pdc_runargs'] = '';
-        $this->default_params['pdc_compilerargs'] = '';
 	
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
+	/* set defaults for params pdc_*: first generic then compiler-specific*/
+	foreach(array('compileargs', 'autocompileargs',
+		      'interpreter', 'interpreterargs',
+		      'runargs') as $name)
+	    $this->default_params["pdc_$name"] = ''; 
 	foreach ($this->pdc_default_params[$this->getParam('compiler')]
 		as $key => $val)
 	    $this->default_params[$key] = $val;
-//	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true)); 
+//	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
+
+	/* TEST VALIDITY HERE - check valid interpreter (per compiler) */
+
     }
 
     public static function getVersionCommand() {
-        return array('echo 0.1', '/([0-9.]*)/');
+        return array('echo 0.2', '/([0-9.]*)/');
     }
 
     public function compile() {
-//        $code = file_get_contents($this->defaultFileName(''));
+//	$code = file_get_contents($this->defaultFileName(''));
 //	$this->rab_log($code);
-	$this->rab_log($this->sourceFileName);
+//	$this->rab_log($this->sourceFileName);
         $this->executableFileName = $this->script;
 	$this->cpl = $this->getParam('compiler');
 	$this->rab_log('cpl = ' . $this->cpl);
@@ -116,12 +121,15 @@ class PDC_Task extends Task {
 	$code = file_get_contents($this->sourceFileName);
 	$pdc = array(
 	    'codelen' => strval(strlen($code)),
-	    'executable' => basename($this->sourceFileName, '.c'),
 	);
-	foreach (array('sourcefilename', 'compileargs', 'runargs')
-		 as $key) 
-	    $pdc[$key] = $this->getParam("pdc_$key");
-	$this->rab_log(print_r($pdc, true)); 
+	foreach (array_keys($this->default_params) as $key)
+	    if (substr($key, 0, 4) == "pdc_")
+	        $pdc[substr($key,4)] = $this->getParam($key);
+	$pdc['executable'] = pathinfo($pdc['sourcefilename'],PATHINFO_FILENAME);
+
+//	$this->rab_log(print_r($pdc, true)); 
+
+	/* compose script input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, "sta\n");
 	fwrite($tgt, implode(" ", array(
@@ -129,11 +137,13 @@ class PDC_Task extends Task {
 			 "$pdc[codelen] $pdc[sourcefilename]", 
  			 "$this->cpl",
 			 "-o $pdc[executable]",
+//			 "$pdc[autocompileargs]",
 			 "$pdc[sourcefilename]",
 		   	 "$pdc[compileargs]\n")));
 	fwrite($tgt, "./$pdc[executable] $pdc[runargs]\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
+
     }
 
 
