@@ -29,7 +29,8 @@ int main() {
 """
 
 
-PDC_CODE = r"""#include <math.h>
+PDC_CODE = r"""
+#include <math.h>
 #include <stdio.h>    // printf()
 #include <stdlib.h>   // atoi()
 #include <omp.h>      // OpenMP
