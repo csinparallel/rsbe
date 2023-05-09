@@ -144,6 +144,8 @@ class PDC_Task extends Task {
 	fwrite($tgt, $code);
 	fclose($tgt);
 
+	$this->rab_log(file_get_contents($this->getTargetFile())); 
+
     }
 
 
