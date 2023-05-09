@@ -71,7 +71,7 @@ class PDC_Task extends Task {
     );
 	
     public $cpl;  /* compiler */
-    public $script= "/shared/pdc-script/standalone";
+    public $execpdc= "/shared/pdc-script/standalone";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
@@ -114,7 +114,7 @@ class PDC_Task extends Task {
 //	$code = file_get_contents($this->defaultFileName(''));
 //	$this->rab_log($code);
 //	$this->rab_log($this->sourceFileName);
-        $this->executableFileName = $this->script;
+        $this->executableFileName = $this->execpdc;
 	$this->cpl = $this->getParam('compiler');
 	$this->rab_log('cpl = ' . $this->cpl);
 	// add error checking for the following
@@ -129,7 +129,7 @@ class PDC_Task extends Task {
 
 //	$this->rab_log(print_r($pdc, true)); 
 
-	/* compose script input file from params and provided code */
+	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, "sta\n");
 	fwrite($tgt, implode(" ", array(
@@ -149,7 +149,7 @@ class PDC_Task extends Task {
     }
 
 
-    // A default name for PDC script files
+    // A default name for sourcecode files
     public function defaultFileName($sourcecode) {
         return 'SOURCE_CODE';
    }
@@ -157,11 +157,11 @@ class PDC_Task extends Task {
 
     // The executable is the output from the compilation
     public function getExecutablePath() {
-        return $this->script;
+        return $this->execpdc;
     }
 
 
     public function getTargetFile() {
-        return 'SCRIPT_INPUT';
+        return 'EXECPDC_INPUT';
     }
 };
