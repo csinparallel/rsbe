@@ -13,7 +13,12 @@
 
 require_once('application/libraries/LanguageTask.php');
 
-class PDC_Task extends Task {
+function pdc_flatten($value) {
+        if (is_array($value))
+	    return implode(' ', array_map('pdc_flatten', $value));
+	else
+	    return strval($value);
+}class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
@@ -132,15 +137,19 @@ class PDC_Task extends Task {
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, "sta\n");
-	fwrite($tgt, implode(" ", array(
+	fwrite($tgt, pdc_flatten(array(
 		         "example1",
-			 "$pdc[codelen] $pdc[sourcefilename]", 
+			 $pdc['codelen'],
+			 $pdc['sourcefilename'], 
  			 "$this->cpl",
-			 "-o $pdc[executable]",
-//			 "$pdc[autocompileargs]",
-			 "$pdc[sourcefilename]",
-		   	 "$pdc[compileargs]\n")));
-	fwrite($tgt, "./$pdc[executable] $pdc[runargs]\n");
+			 "-o",
+			 $pdc['executable'],
+//			 $pdc['autocompileargs'],
+			 $pdc['sourcefilename'],
+		   	 $pdc['compileargs'])) . "\n");
+	fwrite($tgt, "./" . pdc_flatten(array(
+			 $pdc['executable'],
+			 $pdc['runargs'])) . "\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
 
@@ -160,8 +169,9 @@ class PDC_Task extends Task {
         return $this->execpdc;
     }
 
-
     public function getTargetFile() {
         return 'EXECPDC_INPUT';
     }
+
 };
+

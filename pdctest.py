@@ -268,5 +268,18 @@ def main():
     })
     display_result(result_obj)
 
+    print("\n\nRunning PDC/g++ (2)")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.cpp',
+        'sourcecode': TRAP_OMP_CPP,
+        'parameters': {
+            'compiler': 'g++',
+            'runargs' : ['8'],
+            'compileargs': ['-lm', '-fopenmp'], 
+        },
+    })
+    display_result(result_obj)
+
 main()
 
