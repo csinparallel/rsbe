@@ -4,3 +4,5 @@ Archive
 *.new2
 rab_log
 .jobeport
+execpdc
+execpdc_local/
