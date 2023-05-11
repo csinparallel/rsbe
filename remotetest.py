@@ -238,10 +238,10 @@ def main():
 
 
     print("\n\nRunning PDC/g++")
-    result_obj = run_test({
+    result_obj = run_test_pdc({
         'language_id': 'pdc',
         'sourcefilename': 'trap-omp.cpp',
-        'sourcecode': TRAP_OMP_CPP,
+        'sourcecode': PDC_CODE,
         'parameters': {
             'compiler': 'g++',
             'runargs' : '8',
