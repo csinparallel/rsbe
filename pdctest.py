@@ -18,6 +18,14 @@ except:
     JOBE_PORT = '4000'
 JOBE_SERVER = 'localhost:' + JOBE_PORT
 
+C_CODE = r"""
+#include <stdio.h>
+int main() {
+    printf("Hello world\nIsn't this fun!\n");
+}
+"""
+
+
 CPP_CODE = """
 #include <iostream>
 #define MESSAGE "Hello Jobe!"
@@ -225,7 +233,7 @@ def display_result(ro):
 
 
 def main():
-    '''Demo or get languages, a run of C++ then PDC'''
+    '''Demo or get languages, runs of C and C++ then PDC'''
     print("Jobe server:  " + JOBE_SERVER)
     print("Supported languages:")
     resource = '/jobe/index.php/restapi/languages'
@@ -233,6 +241,14 @@ def main():
     for lang, version in lang_versions:
         print("    {}: {}".format(lang, version))
     print()
+
+    print("\n\nRunning C")
+    result_obj = run_test({
+        'language_id': 'c',
+        'sourcefilename': 'test.c',
+        'sourcecode': C_CODE
+    })
+    display_result(result_obj)
 
     print("\n\nRunning C++ (2)")
     result_obj = run_test({
