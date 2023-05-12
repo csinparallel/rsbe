@@ -85,9 +85,11 @@ function pdc_flatten($value) {
     }
 
     public function __construct($filename, $input, $params) {
+	$this->rab_log("**********");
         parent::__construct($filename, $input, $params);
-//	$this->rab_log(print_r($this->params, true));
-	$this->params['sourcefilename'] = $this->sourceFileName;
+//	$this->rab_log(print_r($this->params, true)); //DEBUG
+	if ($this->sourceFileName != "")
+	   $this->params['sourcefilename']	= $this->sourceFileName;
 	$this->sourceFileName = $this->defaultFileName(''); 
 	foreach ($this->params as $key => $val)
 	    if ($key != "compiler") {
@@ -132,7 +134,7 @@ function pdc_flatten($value) {
 	        $pdc[substr($key,4)] = $this->getParam($key);
 	$pdc['executable'] = pathinfo($pdc['sourcefilename'],PATHINFO_FILENAME);
 
-//	$this->rab_log(print_r($pdc, true)); 
+//	$this->rab_log(print_r($pdc, true));  	//DEBUG
 
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
