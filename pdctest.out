@@ -6,9 +6,18 @@ Supported languages:
     nodejs: 12.22.9
     octave: 6.4.0
     pascal: 3.2.2
-    pdc: 0.1
+    pdc: 0.2
     php: 8.1.2
     python3: 3.10.6
+
+
+
+Running C
+Successful run
+
+Output:
+Hello world
+Isn't this fun!
 
 
 
