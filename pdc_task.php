@@ -42,16 +42,18 @@ class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
-//	'mpicc',
-//	'mpic++',
+	'mpicc',
+	'mpic++',
 //	'mpi4py',
-//	'nvcc',
-//	'nvcc++',
+	'nvcc',
+	'nvcc++',
 //	'pgcc',
     );
 
     public $pdc_default_params = array(
         'g++' => array(
+	    'pdc_backend' => 'omp', 
+	    'pdc_ncores' => '4', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-Wall',
@@ -60,6 +62,8 @@ class PDC_Task extends Task {
     	),
     
         'gcc' => array(
+	    'pdc_backend' => 'omp', 
+	    'pdc_ncores' => '4', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
                 '-Wall',
@@ -68,28 +72,46 @@ class PDC_Task extends Task {
     	),
     
         'mpicc' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_interpreter' => 'mpirun',
     	),
     	
         'mpic++' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_interpreter' => 'mpirun',
     	),
     	
         'mpi4py' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
     	),
     	
         'nvcc' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
+            'pdc_autocompileargs' => array(
+                '-arch=compute_61',
+    	    ),
     	),
     	
         'nvcc++' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
+            'pdc_autocompileargs' => array(
+                '-arch=compute_61',
+    	    ),
     	),
     	
         'pgcc' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
     	),
     	
@@ -125,7 +147,8 @@ class PDC_Task extends Task {
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
 	/* set defaults for params pdc_*: first generic then compiler-specific*/
-	foreach(array('compileargs', 'autocompileargs',
+	foreach(array('nhosts', 'ncores', 
+		      'compileargs', 'autocompileargs',
 		      'interpreter', 'interpreterargs',
 		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = ''; 
@@ -175,21 +198,26 @@ class PDC_Task extends Task {
 
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
-	fwrite($tgt, "omp\n");
+	fwrite($tgt, $pdc['backend'] . "\n");
 	fwrite($tgt, pdc_flatten(array(
 		         $this->id,
-			 "4", 
+#			 isset($pdc['nhosts']) ? $pdc['nhosts']: '', 
+#			 isset($pdc['ncores']) ? $pdc['ncores']: '', 
+			 $pdc['nhosts'],
+			 $pdc['ncores'],
 			 $pdc['codelen'],
 			 $pdc['sourcefilename'], 
  			 "$this->cpl",
 			 "-o",
 			 $pdc['executable'],
-//			 $pdc['autocompileargs'],
+			 $pdc['autocompileargs'],
 			 $pdc['sourcefilename'],
 		   	 $pdc['compileargs'])) . "\n");
-	fwrite($tgt, "./" . pdc_flatten(array(
-			 $pdc['executable'],
-			 $pdc['runargs'])) . "\n");
+	fwrite($tgt, trim(pdc_flatten(array(
+		     	 $pdc['interpreter'],
+			 $pdc['interpreterargs'],
+			 "./" . $pdc['executable'],
+			 $pdc['runargs']))) . "\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
 
