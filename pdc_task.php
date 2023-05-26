@@ -155,7 +155,6 @@ class PDC_Task extends Task {
 	$this->default_params['interpreterargs'] = array(
             $this->id,
 	);
-	$this->rab_log(print_r($this->default_params['interpreterargs'], true));
 
 	/* prepare specification of the desired a PD computation (to be
 	   performed by RSBE), and store that specification in target file
