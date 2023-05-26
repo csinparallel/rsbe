@@ -8,30 +8,52 @@
  *
  * @copyright  2014 Richard Lobb, University of Canterbury
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * adapted from cpp_task.php by rab@stolaf.edu, March 2023
+ * adapted from cpp_task.php by rab@stolaf.edu, March-May 2023
  */
+
+/* In this "pseudo language", parallel and distributed computations are
+   performed on another server, a Runestone Backend (RSBE), instead of
+   being performed on the Jobe server itself.  When Jobe receives a PDC
+   request from Runestone, Jobe invokes an application $this->execpdc that
+   transmits the requested to RSBE and delivers the results of the desired 
+   PD computation, which Jobe relays to Runestone.
+
+   The runspec for a PDC request must include a "compiler" value that
+   signals a type of PD computation to perform, listed in
+   $this->supported_compilers, plus standard runspec values and parameters
+   intended for desired PD computation on RSBE (vs. $this->execpdc on Jobe) */
 
 require_once('application/libraries/LanguageTask.php');
 
+/* helper function, a generalization of array_merge() for assembling
+   command lines, etc.
+   The argument $value may be a single value or a (possibly nested) array
+   of values.  The function returns a combined single string consisting of
+   all values in depth-first order, separated by spaces.  */
+   
 function pdc_flatten($value) {
         if (is_array($value))
 	    return implode(' ', array_map('pdc_flatten', $value));
 	else
 	    return strval($value);
-}class PDC_Task extends Task {
+}
+
+class PDC_Task extends Task {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
-//	'mpicc',
-//	'mpic++',
+	'mpicc',
+	'mpic++',
 //	'mpi4py',
-//	'nvcc',
-//	'nvcc++',
+	'nvcc',
+	'nvcc++',
 //	'pgcc',
     );
 
     public $pdc_default_params = array(
         'g++' => array(
+	    'pdc_backend' => 'omp', 
+	    'pdc_ncores' => '4', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-Wall',
@@ -40,6 +62,8 @@ function pdc_flatten($value) {
     	),
     
         'gcc' => array(
+	    'pdc_backend' => 'omp', 
+	    'pdc_ncores' => '4', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
                 '-Wall',
@@ -48,35 +72,53 @@ function pdc_flatten($value) {
     	),
     
         'mpicc' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_interpreter' => 'mpirun',
     	),
     	
         'mpic++' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_interpreter' => 'mpirun',
     	),
     	
         'mpi4py' => array(
+	    'pdc_backend' => 'mpi', 
+	    'pdc_nhosts' => '4', 
+	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
     	),
     	
         'nvcc' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
+            'pdc_autocompileargs' => array(
+                '-arch=compute_61',
+    	    ),
     	),
     	
         'nvcc++' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
+            'pdc_autocompileargs' => array(
+                '-arch=compute_61',
+    	    ),
     	),
     	
         'pgcc' => array(
+	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
     	),
     	
     );
 	
     public $cpl;  /* compiler */
-    public $execpdc= "/shared/pdc-script/standalone";
+    public $execpdc= "/shared/execpdc/execpdc";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
@@ -88,6 +130,11 @@ function pdc_flatten($value) {
 	$this->rab_log("**********");
         parent::__construct($filename, $input, $params);
 //	$this->rab_log(print_r($this->params, true)); //DEBUG
+
+	/* most received runspec values and parameters are intended for the
+	   PD computation to perform on RSBE.  We will prepend "pdc_"
+	   to the keys of such parameters, and use them in compile() to
+	   specify the desired PD computation.  */ 
 	if ($this->sourceFileName != "")
 	   $this->params['sourcefilename']	= $this->sourceFileName;
 	$this->sourceFileName = $this->defaultFileName(''); 
@@ -100,13 +147,15 @@ function pdc_flatten($value) {
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
 	/* set defaults for params pdc_*: first generic then compiler-specific*/
-	foreach(array('compileargs', 'autocompileargs',
+	foreach(array('nhosts', 'ncores', 
+		      'compileargs', 'autocompileargs',
 		      'interpreter', 'interpreterargs',
 		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = ''; 
 	foreach ($this->pdc_default_params[$this->getParam('compiler')]
 		as $key => $val)
 	    $this->default_params[$key] = $val;
+
 //	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
 
 	/* TEST VALIDITY HERE - check valid interpreter (per compiler) */
@@ -123,6 +172,17 @@ function pdc_flatten($value) {
 //	$this->rab_log($this->sourceFileName);
         $this->executableFileName = $this->execpdc;
 	$this->cpl = $this->getParam('compiler');
+
+	/* prepare first argument for the $this->execpdc command line, which
+	   will be assembled in getRunCommand() (defined in LanguageTask.php) */
+	$this->default_params['interpreterargs'] = array(
+            $this->id,
+	);
+
+	/* prepare specification of the desired a PD computation (to be
+	   performed by RSBE), and store that specification in target file
+	   (i.e., second command-line argument) for $this->execpdc */
+
 	$this->rab_log('cpl = ' . $this->cpl);
 	// add error checking for the following
 	$code = file_get_contents($this->sourceFileName);
@@ -138,24 +198,31 @@ function pdc_flatten($value) {
 
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
-	fwrite($tgt, "sta\n");
+	fwrite($tgt, $pdc['backend'] . "\n");
 	fwrite($tgt, pdc_flatten(array(
-		         "example1",
+		         $this->id,
+#			 isset($pdc['nhosts']) ? $pdc['nhosts']: '', 
+#			 isset($pdc['ncores']) ? $pdc['ncores']: '', 
+			 $pdc['nhosts'],
+			 $pdc['ncores'],
 			 $pdc['codelen'],
 			 $pdc['sourcefilename'], 
  			 "$this->cpl",
 			 "-o",
 			 $pdc['executable'],
-//			 $pdc['autocompileargs'],
+			 $pdc['autocompileargs'],
 			 $pdc['sourcefilename'],
 		   	 $pdc['compileargs'])) . "\n");
-	fwrite($tgt, "./" . pdc_flatten(array(
-			 $pdc['executable'],
-			 $pdc['runargs'])) . "\n");
+	fwrite($tgt, trim(pdc_flatten(array(
+		     	 $pdc['interpreter'],
+			 $pdc['interpreterargs'],
+			 "./" . $pdc['executable'],
+			 $pdc['runargs']))) . "\n");
 	fwrite($tgt, $code);
 	fclose($tgt);
 
-	$this->rab_log(file_get_contents($this->getTargetFile())); 
+	$this->rab_log(
+	  implode("", array_slice(file($this->getTargetFile()), 0, 6)) . "...");
 
     }
 

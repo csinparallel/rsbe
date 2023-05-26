@@ -12,6 +12,15 @@ Supported languages:
 
 
 
+Running C
+Successful run
+
+Output:
+Hello world
+Isn't this fun!
+
+
+
 Running C++ (2)
 Successful run
 
@@ -45,4 +54,58 @@ Successful run
 Output:
 OMP defined, threadct = 8
 With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
+
+
+
+Running PDC/mpicc
+Successful run
+
+Output:
+Greetings from process #0 of 4 on csinparallel
+Greetings from process #1 of 4 on csinparallel
+Greetings from process #2 of 4 on csinparallel
+Greetings from process #3 of 4 on csinparallel
+
+
+
+Running PDC/mpic++
+Successful run
+
+Output:
+maximal score is 5, achieved by ligands 
+hoach 
+
+
+
+Running PDC/nvcc
+Successful run
+
+Output:
+Device 0: "Quadro P2200" with Compute 6.1 capability
+Total amount of global memory:      5053 MBytes (5298716672 bytes)
+GPU device shared memory per block of threads on an SM: 49152 bytes
+GPU device total number of streaming multiprocessors: 10
+With  10 Multiprocessors (MPs), this device has 128 CUDA Cores/MP,
+ for total of  1280 CUDA Cores on this device.
+
+Max dimension sizes of a grid (x,y,z): (2147483647, 65535, 65535)
+Max dimension sizes of a thread block (x,y,z): (1024, 1024, 64)
+
+
+
+Running PDC/nvcc
+Successful run
+
+Output:
+Grid Dimensions : {1, 1, 1} blocks. 
+Block Dimensions : {8, 1, 1} threads.
+From each thread:
+I am thread (0, 0, 0) of block (0, 0, 0) in the grid
+I am thread (1, 0, 0) of block (0, 0, 0) in the grid
+I am thread (2, 0, 0) of block (0, 0, 0) in the grid
+I am thread (3, 0, 0) of block (0, 0, 0) in the grid
+I am thread (4, 0, 0) of block (0, 0, 0) in the grid
+I am thread (5, 0, 0) of block (0, 0, 0) in the grid
+I am thread (6, 0, 0) of block (0, 0, 0) in the grid
+I am thread (7, 0, 0) of block (0, 0, 0) in the grid
 
