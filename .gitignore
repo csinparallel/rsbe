@@ -1,8 +1,8 @@
-Archive
+old
 *~
 *.new
 *.new2
 rab_log
 .jobeport
 execpdc
-execpdc_local/
+execpdc_*_local/
