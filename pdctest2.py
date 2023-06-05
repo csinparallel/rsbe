@@ -1,7 +1,5 @@
 #! /usr/bin/env python3
-''' pdctest.py - a demo of how to submit a program to Jobe.
-    Demonstrates C, C++, and all implemented compilers in PDC pseudolanguage;  
-    Includes a call to get the list of languages.
+''' pdctest2.py - further debugging tests for PDC pseudolanguage in Jobe. 
 '''
 
 from urllib.error import HTTPError
@@ -17,25 +15,6 @@ try:
 except:
     JOBE_PORT = '4000'
 JOBE_SERVER = 'localhost:' + JOBE_PORT
-
-C_CODE = r"""
-#include <stdio.h>
-int main() {
-    printf("Hello world\nIsn't this fun!\n");
-}
-"""
-
-
-CPP_CODE = """
-#include <iostream>
-#define MESSAGE "Hello Jobe!"
-using namespace std;
-
-int main() {
-    cout << MESSAGE << endl;
-}
-"""
-
 
 TRAP_OMP_C = r"""
 #include <math.h>
@@ -725,19 +704,16 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning C")
+    print("\n\nRunning PDC/gcc")
     result_obj = run_test({
-        'language_id': 'c',
-        'sourcefilename': 'test.c',
-        'sourcecode': C_CODE
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning C++ (2)")
-    result_obj = run_test({
-        'language_id': 'cpp',
-        'sourcefilename': 'test.cpp',
-        'sourcecode': CPP_CODE
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.c',
+        'sourcecode': TRAP_OMP_C,
+        'parameters': {
+            'compiler': 'gcc',
+            'runargs' : '8',
+            'compileargs': '-lm -fopenmp', 
+        },
     })
     display_result(result_obj)
 
@@ -748,8 +724,24 @@ def main():
         'sourcecode': TRAP_OMP_C,
         'parameters': {
             'compiler': 'gcc',
-            'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
+            'runargs' : '4',
+            'compileargs': '-lm -fopenmp',
+            'interpreterargs': '-np 4',
+        },
+    })
+    display_result(result_obj)
+
+    print("\n\nRunning PDC/gcc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.c',
+        'sourcecode': TRAP_OMP_C,
+        'parameters': {
+            'compiler': 'gcc',
+            'runargs' : '3',
+            'compileargs': '-lm -fopenmp',
+            'interpreterargs': '-np 4',
+            'interpreter': 'mpirun',
         },
     })
     display_result(result_obj)
@@ -767,21 +759,20 @@ def main():
     })
     display_result(result_obj)
 
-    print("\n\nRunning PDC/g++ (2)")
+    print("\n\nRunning PDC/g++")
     result_obj = run_test({
         'language_id': 'pdc',
-#        'sourcefilename': 'trap-omp.cpp',
+        'sourcefilename': 'trap-omp.cpp',
         'sourcecode': TRAP_OMP_CPP,
         'parameters': {
             'compiler': 'g++',
-            'runargs' : ['8'],
-            'compileargs': ['-lm', '-fopenmp'], 
+            'runargs' : '5',
+            'compileargs': '-lm -fopenmp', 
+            'interpreterargs': '-np 4',
+            'interpreter': 'mpirun',
         },
     })
     display_result(result_obj)
-
-# new items
-
 
     print("\n\nRunning PDC/mpicc")
     result_obj = run_test({
@@ -793,6 +784,40 @@ def main():
             'interpreterargs' : [
                 '-map-by node',
                 '-np 4',
+            ],
+        },
+    })
+    display_result(result_obj)
+
+
+    print("\n\nRunning PDC/mpicc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'mpi_spmd.c',
+        'sourcecode': MPI_SPMD_C,
+        'parameters': {
+            'compiler': 'mpicc',
+            'interpreter': 'mpiexec',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 6',
+            ],
+        },
+    })
+    display_result(result_obj)
+
+
+    print("\n\nRunning PDC/mpicc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'mpi_spmd.c',
+        'sourcecode': MPI_SPMD_C,
+        'parameters': {
+            'compiler': 'mpicc',
+            'interpreter': 'mpinone',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 3',
             ],
         },
     })
@@ -822,31 +847,28 @@ def main():
     display_result(result_obj)
 
 
-    print("\n\nRunning PDC/nvcc")
+    print("\n\nRunning PDC/mpic++")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'cuda_device_info.cu',
-        'sourcecode': CUDA_DEVICE_INFO_CU,
+        'sourcefilename': 'dd_mpi.cpp',
+        'sourcecode': DD_MPI_CPP,
         'parameters': {
-            'compiler': 'nvcc',
-            # no compileargs - note that -arch=... is automatic and server-side
-            # no runargs or interpreterargs
+            'compiler': 'mpic++',
+            'compileargs': [
+                '-std=c++11',
+            ],
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 3',
+            ],
+            'interpreter': 'mpiexec', 
+            'runargs' : [
+                '5',
+                '100',
+            ],
         },
     })
     display_result(result_obj)
-
-
-    print("\n\nRunning PDC/nvcc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'cuda_dim3Demo.cu',
-        'sourcecode': CUDA_DIM3DEMO_CU,
-        'parameters': {
-            'compiler': 'nvcc',
-        },
-    })
-    display_result(result_obj)
-
 
 
 main()
