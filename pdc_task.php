@@ -47,7 +47,8 @@ class PDC_Task extends Task {
 //	'mpi4py',
 	'nvcc',
 	'nvcc++',
-//	'pgcc',
+	'pgcc',
+	'pgc++',
     );
 
     public $pdc_default_params = array(
@@ -101,7 +102,8 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
-                '-arch=compute_61',
+                '-arch=native',
+//                '-arch=compute_61',
     	    ),
     	),
     	
@@ -109,13 +111,31 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
-                '-arch=compute_61',
+                '-arch=native',
+//                '-arch=compute_61',
     	    ),
     	),
     	
         'pgcc' => array(
 	    'pdc_backend' => 'gpu', 
-	    'pdc_sourcefilename' => 'prog.cu', 
+	    'pdc_sourcefilename' => 'prog.c', 
+            'pdc_autocompileargs' => array(
+                '-acc',
+                '-ta=nvidia',
+                '-Minfo=accel',
+//                '-arch=compute_61',
+    	    ),
+    	),
+    	
+        'pgc++' => array(
+	    'pdc_backend' => 'gpu', 
+	    'pdc_sourcefilename' => 'prog.cpp', 
+            'pdc_autocompileargs' => array(
+                '-acc',
+                '-ta=nvidia',
+                '-Minfo=accel',
+//                '-arch=compute_61',
+    	    ),
     	),
     	
     );
