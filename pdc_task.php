@@ -129,7 +129,7 @@ class PDC_Task extends Task {
     public function __construct($filename, $input, $params) {
 	$this->rab_log("**********");
         parent::__construct($filename, $input, $params);
-//	$this->rab_log(print_r($this->params, true)); //DEBUG
+	$this->rab_log(print_r($this->params, true)); //DEBUG
 
 	/* most received runspec values and parameters are intended for the
 	   PD computation to perform on RSBE.  We will prepend "pdc_"
@@ -156,7 +156,7 @@ class PDC_Task extends Task {
 		as $key => $val)
 	    $this->default_params[$key] = $val;
 
-//	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
+	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
 
 	/* TEST VALIDITY HERE - check valid interpreter (per compiler) */
 
@@ -167,6 +167,7 @@ class PDC_Task extends Task {
     }
 
     public function compile() {
+	$this->rab_log('entering compile()');
 //	$code = file_get_contents($this->defaultFileName(''));
 //	$this->rab_log($code);
 //	$this->rab_log($this->sourceFileName);
