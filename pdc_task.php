@@ -47,7 +47,8 @@ class PDC_Task extends Task {
 //	'mpi4py',
 	'nvcc',
 	'nvcc++',
-//	'pgcc',
+	'pgcc',
+	'pgc++',
     );
 
     public $pdc_default_params = array(
@@ -77,6 +78,7 @@ class PDC_Task extends Task {
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_interpreter' => 'mpirun',
+	    'interpreter_choices' => array('mpirun', 'mpiexec'),
     	),
     	
         'mpic++' => array(
@@ -85,6 +87,7 @@ class PDC_Task extends Task {
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_interpreter' => 'mpirun',
+	    'interpreter_choices' => array('mpirun', 'mpiexec'),
     	),
     	
         'mpi4py' => array(
@@ -92,13 +95,15 @@ class PDC_Task extends Task {
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
+	    'interpreter_choices' => array('mpirun', 'mpiexec'),
     	),
     	
         'nvcc' => array(
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
-                '-arch=compute_61',
+                '-arch=native',
+//                '-arch=compute_61',
     	    ),
     	),
     	
@@ -106,18 +111,37 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
-                '-arch=compute_61',
+                '-arch=native',
+//                '-arch=compute_61',
     	    ),
     	),
     	
         'pgcc' => array(
 	    'pdc_backend' => 'gpu', 
-	    'pdc_sourcefilename' => 'prog.cu', 
+	    'pdc_sourcefilename' => 'prog.c', 
+            'pdc_autocompileargs' => array(
+                '-acc',
+                '-ta=nvidia',
+                '-Minfo=accel',
+//                '-arch=compute_61',
+    	    ),
+    	),
+    	
+        'pgc++' => array(
+	    'pdc_backend' => 'gpu', 
+	    'pdc_sourcefilename' => 'prog.cpp', 
+            'pdc_autocompileargs' => array(
+                '-acc',
+                '-ta=nvidia',
+                '-Minfo=accel',
+//                '-arch=compute_61',
+    	    ),
     	),
     	
     );
 	
     public $cpl;  /* compiler */
+    public $interpreter_choices;  
     public $execpdc= "/shared/execpdc/execpdc";
     
     function rab_log($msg) {
@@ -127,9 +151,9 @@ class PDC_Task extends Task {
     }
 
     public function __construct($filename, $input, $params) {
-	$this->rab_log("**********");
+	$this->rab_log("******************************");
         parent::__construct($filename, $input, $params);
-//	$this->rab_log(print_r($this->params, true)); //DEBUG
+	$this->rab_log(print_r($this->params, true)); //DEBUG
 
 	/* most received runspec values and parameters are intended for the
 	   PD computation to perform on RSBE.  We will prepend "pdc_"
@@ -151,15 +175,19 @@ class PDC_Task extends Task {
 		      'compileargs', 'autocompileargs',
 		      'interpreter', 'interpreterargs',
 		      'runargs') as $name)
-	    $this->default_params["pdc_$name"] = ''; 
-	foreach ($this->pdc_default_params[$this->getParam('compiler')]
-		as $key => $val)
+	    $this->default_params["pdc_$name"] = '';
+	$cpl_default_params =
+	    $this->pdc_default_params[$this->getParam('compiler')];
+	foreach ($cpl_default_params as $key => $val)
 	    $this->default_params[$key] = $val;
-
 //	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
 
-	/* TEST VALIDITY HERE - check valid interpreter (per compiler) */
-
+	if (isset($cpl_default_params['interpreter_choices']) &&
+	        is_array($cpl_default_params['interpreter_choices']))
+	    $this->interpreter_choices =
+	        $cpl_default_params['interpreter_choices'];
+	else
+	    $this->interpreter_choices = false;
     }
 
     public static function getVersionCommand() {
@@ -195,6 +223,18 @@ class PDC_Task extends Task {
 	$pdc['executable'] = pathinfo($pdc['sourcefilename'],PATHINFO_FILENAME);
 
 //	$this->rab_log(print_r($pdc, true));  	//DEBUG
+
+	if (!$this->interpreter_choices ||
+	        !in_array($pdc['interpreter'], $this->interpreter_choices)) {
+	    if ($this->interpreter_choices) {
+	        // assert:  $this->interpreter_choices is non-empty array
+		//    AND $pdc['interpreter'] is not in that array
+		$this->rab_log("invalid interpreter: " . $pdc['interpreter']);
+		// THROW EXCEPTION?? convey to user via do_run script?
+	    }
+	    $pdc['interpreter'] = '';
+	    $pdc['interpreterargs'] = '';
+	}
 
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
