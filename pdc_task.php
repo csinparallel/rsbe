@@ -121,7 +121,7 @@ class PDC_Task extends Task {
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
                 '-acc',
-                '-ta=nvidia',
+                '-ta=tesla:managed',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),
@@ -132,7 +132,7 @@ class PDC_Task extends Task {
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-acc',
-                '-ta=nvidia',
+                '-ta=tesla:managed',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),

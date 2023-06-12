@@ -260,7 +260,6 @@ def main():
             'compiler': 'pgcc',
             'runargs': [
                 1000,
-                20,
                 0
             ],
         },

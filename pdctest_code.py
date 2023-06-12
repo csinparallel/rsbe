@@ -599,138 +599,130 @@ int main(int argc, char **argv) {
 """
 
 ACC_CODE = r"""
-#include "stdio.h"
-#include "stdlib.h"
-#include "omp.h"
-#include "math.h"
-#include "openacc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+#include <time.h>
 
-int main (int argc, char **argv);
-
-void fillMatrix(int size, float **restrict A) {
-// #pragma acc kernels loop collapse(2) pcopyin(A[0:size][0:size]) pcopyout(A[0:size][0:size]) gang(1000), vector(32)
-   for (int i = 0; i < size; ++i) {
-      for (int j = 0; j < size; ++j) {
-        A[i][j] = ((float)i);
-      }
-   }
-}
-
-float** MatrixMult(int size, int nr, int nc, float **restrict A, float **restrict B,
-        float **restrict C) {
-
-#pragma acc kernels loop pcopyin(A[0:size-1][0:size],B[0:size][0:size]) \
-  pcopyout(C[0:size][0:size]) 
-   for (int i = 0; i < size; ++i) {
-#pragma acc loop 
-     for (int j = 0; j < size; ++j) {
-       float tmp = 0.;
-#pragma acc loop reduction(+:tmp)
-       for (int k = 0; k < size; ++k) {
-          tmp += A[i][k] * B[k][j];
-       }
-       C[i][j] = tmp;
-     }
-   }
-   return C;
-}
-
-float** MakeMatrix(int size, int nr, int nc, float **restrict arr) {
-    int i;
-    arr = (float **)malloc( sizeof(float *) * nr);
-    arr[0] = (float *)malloc( sizeof(float) * nr * nc);
-    for (i=1; i<nc; i++){
-       arr[i] = (float *)(arr[i-1] + nc);
-    }
-    return arr;
-}
-
-void showMatrix(int size, int nr, int nc, float **restrict arr) {
-   int i, j;
-   for (i=0; i<size; i++){
-      for (j=0; j<size; j++){
-         printf("arr[%d][%d]=%f \n",i,j,arr[i][j]);
-      }
-   }
-}
-
-void copyMatrix(float **restrict A, float **restrict B, int nr, int nc){
-#pragma acc kernels loop copyin(A[0:nr][0:nc],B[0:nr][0:nc]) copyout(A[0:nr][0:nc]) //gang(100) vector(32)
-   for (int i=0; i<nc; ++i){
-#pragma acc loop //gang(100) vector(32)
-      for (int j=0; j<nr; ++j){
-         A[i][j] = B[i][j];
-      }
-   }
-}
+// function declarations
+void fillMatrix(int size, float * A);
+void MatrixMult(int size, float * __restrict__ A, 
+                   float * __restrict__ B, float * __restrict__ C);// 
+void getArguments(int argc, char **argv, int *size, int *verbose);
+void debugPrintMatrix(int verbose, int size, float *matrix, const char *msg);
+void showMatrix(int size, float * matrix);
 
 int main (int argc, char **argv) {
+ 
+   // default values
+   int size = 256;          // num rows, cols of square matrix
+   int verbose = 0;         // default to not printing matrices
+   getArguments(argc, argv, &size, &verbose); //change defaults
 
-   float **A, **B, **C;
-    
-   if (argc != 4) {
-      fprintf(stderr,"Use: %s size nIter verbose\n", argv[0]);
-      return -1;
-   }
-   int size = atoi(argv[1]);
-   int nIter = atoi(argv[2]);
-   int verbose = atoi(argv[3]);
-   int nr = size; //square matrix
-   int nc = size; //square matrix
-    
-   if (nIter <= 0) {
-      fprintf(stderr,"%s: Invalid nIter (%d)\n", argv[0],nIter);
-      return -1;
-   }
-   A = (float**)MakeMatrix(size, nr, nc, A);
+   float * A;  // input matrix
+   float * B;  // input matrix
+   float * C;  // output matrix
+
+// Use a 'flattened' 1D array of contiguous memory for the matrices
+// size = number of rows = number of columns in the square matrices
+   size_t num_elements = size * size * sizeof(float);
+   A = (float *)malloc(num_elements);
+   B = (float *)malloc(num_elements);
+   C = (float *)malloc(num_elements);
+
    fillMatrix(size, A);
-   B = (float**)MakeMatrix(size, nr, nc, B);
    fillMatrix(size, B);
-   C = (float**)MakeMatrix(size, nr, nc, C);
-   if (verbose==1){
-      printf("matrix A after filling: \n");
-      showMatrix(size, nr, nc, A);
-   }
+   char msgA[32] = "matrix A after filling:";
+   debugPrintMatrix(verbose, size, A, msgA);
    
-// without this, A and B are copied to device at every iteration   
-#pragma acc data pcopyin(A[0:nr][0:nc],B[0:nr][0:nc],C[0:nr][0:nc]) pcopyout(C[0:nr][0:nc])
-{
-   double startTime_tot = omp_get_wtime();
-   for (int i=0; i<nIter; i++) {
-      double startTime_iter = omp_get_wtime();
-      C = MatrixMult(size, nr, nc, A, B, C);
-      if (verbose==1) {
-         printf("matrix A after MatrixMult(): \n");
-         showMatrix(size, nr, nc, A);  // these will show garbage values unless the data region is removed
-         printf("matrix C after MatrixMult(): \n");
-         showMatrix(size, nr, nc, C);  // these will show garbage values unless the data region is removed
-      }
-      if (i%2==1) {
-         copyMatrix(A, C, nr, nc); //multiply A by B and assign back to A on even iterations
-         if (verbose==1){
-            printf("matrix A after C gets copied to it: \n");
-            showMatrix(size, nr, nc, A);  // these will show garbage values unless the data region is removed
-         }
-      }
-      else {
-         copyMatrix(B, C, nr, nc); //multiply A by B and assign back to B on odd iterations
-         if (verbose==1){
-            printf("matrix B after C gets copied to it: \n");
-            showMatrix(size, nr, nc, B); // these will show garbage values unless the data region is removed
-         }
-      }
-      float endTime_iter = omp_get_wtime();
-      if (verbose==1) printf("%s iteration runtime %8.5g\n", argv[0], (endTime_iter-startTime_iter));
-   }
-   double endTime_tot = omp_get_wtime();
+   // double startTime = omp_get_wtime();
+   clock_t t_start, t_end;              // for timing
+   t_start = clock();
+   
+   MatrixMult(size, A, B, C);
 
-   printf("%s total runtime %f\n", argv[0], (endTime_tot-startTime_tot));
-}
-   if ((verbose==1) || (verbose==2)){
-      printf("matrix C after all iterations\n");
-      showMatrix(size, nr, nc, C); // this will show correct values outside of the data region
-   }
+   char msgC[32] = "matrix C after MatrixMult(): ";
+   debugPrintMatrix(verbose, size, C, msgC);
+   
+   // double endTime = omp_get_wtime();
+   t_end = clock();
+   double tot_time_secs = ((double)(t_end-t_start)) / CLOCKS_PER_SEC;
+   // double tot_time = endTime - startTime;
+   printf("%s total runtime %f seconds (%f milliseconds)\n", argv[0], tot_time_secs, tot_time_secs*1000);
+   // printf("%s total omp runtime %f seconds (%f milliseconds)\n", argv[0], tot_time, tot_time*1000);
+
    free(A); free(B); free(C); 
    return 0;
+}
+////////////////////////////////////// end main
+
+// fill a given square matrix with rows of float values 
+// equal to each row number
+void fillMatrix(int size, float * A) {
+   for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        A[i*size + j] = ((float)i);
+      }
+   }
+}
+
+// mutiply matrix A times matrix B, placing result in matrix C
+// void MatrixMult(int size, float * __restrict__ A, 
+//                float * __restrict__ B, float * __restrict__ C) {
+void MatrixMult(int size, float * restrict A, 
+               float * restrict B, float * restrict C) {
+   
+   float tmp = 0.;      // holds dot product for each cell of C
+
+#pragma acc kernels pcopyin(A[0:size*size],B[0:size*size],C[0:size*size]) pcopyout(C[0:size*size])
+#pragma acc loop collapse(2) independent private(tmp)
+   for (int i = 0; i < size; ++i) {
+     for (int j = 0; j < size; ++j) {
+       tmp = 0.;
+#pragma acc loop seq 
+       for (int k = 0; k < size; ++k) {
+          tmp += A[i*size + k] * B[k*size + i];
+       }
+       C[i*size + j] = tmp;    // update cell of C once
+     }
+   }
+}
+
+void getArguments(int argc, char **argv, int *size, int *verbose) {
+   // 2 arguments optional: 
+   //   size of one side of square matrix
+   //   verbose printing for debugging
+   if (argc > 3) {
+      fprintf(stderr,"Use: %s [size] [verbose]\n", argv[0]);
+      exit(EXIT_FAILURE);
+   }
+
+   if (argc >= 2) {
+      *size = atoi(argv[1]);
+      if (argc == 3) {
+         *verbose = atoi(argv[2]);
+      }
+   }
+   
+   if (*verbose) {
+      printf("size of matrix side: %d\n", *size);
+   }
+}
+
+void debugPrintMatrix(int verbose, int size, float *matrix, const char *msg) {
+   if (verbose){
+      printf("%s \n", msg);
+      showMatrix(size, matrix);
+   }
+}
+
+// display a given square matrix for debugging purposes
+void showMatrix(int size, float * matrix) {
+   int i, j;
+   for (i=0; i<size; i++){
+      for (j=0; j<size; j++) {
+         printf("element [%d][%d] = %f \n",i,j, matrix[i*size + j]);
+      }
+   }
 }
 """

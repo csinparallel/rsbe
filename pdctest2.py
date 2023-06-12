@@ -126,171 +126,21 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning PDC/gcc")
+    print("\n\nRunning PDC/pgcc")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.c',
-        'sourcecode': TRAP_OMP_C,
+        'sourcefilename': 'matrix_ex_float_acc.c',
+        'sourcecode': ACC_CODE,
         'parameters': {
-            'compiler': 'gcc',
-            'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
-        },
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning PDC/gcc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.c',
-        'sourcecode': TRAP_OMP_C,
-        'parameters': {
-            'compiler': 'gcc',
-            'runargs' : '4',
-            'compileargs': '-lm -fopenmp',
-            'interpreterargs': '-np 4',
-        },
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning PDC/gcc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.c',
-        'sourcecode': TRAP_OMP_C,
-        'parameters': {
-            'compiler': 'gcc',
-            'runargs' : '3',
-            'compileargs': '-lm -fopenmp',
-            'interpreterargs': '-np 4',
-            'interpreter': 'mpirun',
-        },
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning PDC/g++")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.cpp',
-        'sourcecode': TRAP_OMP_CPP,
-        'parameters': {
-            'compiler': 'g++',
-            'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
-        },
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning PDC/g++")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.cpp',
-        'sourcecode': TRAP_OMP_CPP,
-        'parameters': {
-            'compiler': 'g++',
-            'runargs' : '5',
-            'compileargs': '-lm -fopenmp', 
-            'interpreterargs': '-np 4',
-            'interpreter': 'mpirun',
-        },
-    })
-    display_result(result_obj)
-
-    print("\n\nRunning PDC/mpicc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'mpi_spmd.c',
-        'sourcecode': MPI_SPMD_C,
-        'parameters': {
-            'compiler': 'mpicc',
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 4',
+            'compiler': 'pgcc',
+            'runargs': [
+                1000,
+                0
             ],
         },
     })
     display_result(result_obj)
 
-
-    print("\n\nRunning PDC/mpicc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'mpi_spmd.c',
-        'sourcecode': MPI_SPMD_C,
-        'parameters': {
-            'compiler': 'mpicc',
-            'interpreter': 'mpiexec',
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 6',
-            ],
-        },
-    })
-    display_result(result_obj)
-
-
-    print("\n\nRunning PDC/mpicc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'mpi_spmd.c',
-        'sourcecode': MPI_SPMD_C,
-        'parameters': {
-            'compiler': 'mpicc',
-            'interpreter': 'mpinone',
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 3',
-            ],
-        },
-    })
-    display_result(result_obj)
-
-
-    print("\n\nRunning PDC/mpic++")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'dd_mpi.cpp',
-        'sourcecode': DD_MPI_CPP,
-        'parameters': {
-            'compiler': 'mpic++',
-            'compileargs': [
-                '-std=c++11',
-            ],
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 8',
-            ],
-            'runargs' : [
-                '5',
-                '100',
-            ],
-        },
-    })
-    display_result(result_obj)
-
-
-    print("\n\nRunning PDC/mpic++")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'dd_mpi.cpp',
-        'sourcecode': DD_MPI_CPP,
-        'parameters': {
-            'compiler': 'mpic++',
-            'compileargs': [
-                '-std=c++11',
-            ],
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 3',
-            ],
-            'interpreter': 'mpiexec', 
-            'runargs' : [
-                '5',
-                '100',
-            ],
-        },
-    })
-    display_result(result_obj)
 
 
 main()
