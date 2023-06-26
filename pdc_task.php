@@ -121,7 +121,7 @@ class PDC_Task extends Task {
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
                 '-acc',
-                '-ta=nvidia',
+                '-ta=tesla:managed',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),
@@ -132,7 +132,7 @@ class PDC_Task extends Task {
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-acc',
-                '-ta=nvidia',
+                '-ta=tesla:managed',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),
@@ -195,7 +195,6 @@ class PDC_Task extends Task {
     }
 
     public function compile() {
-	$this->rab_log('entering compile()');
 //	$code = file_get_contents($this->defaultFileName(''));
 //	$this->rab_log($code);
 //	$this->rab_log($this->sourceFileName);
