@@ -63,8 +63,8 @@ Successful run
 Output:
 Greetings from process #0 of 4 on csinparallel
 Greetings from process #1 of 4 on csinparallel
-Greetings from process #3 of 4 on csinparallel
 Greetings from process #2 of 4 on csinparallel
+Greetings from process #3 of 4 on csinparallel
 
 
 
@@ -115,11 +115,9 @@ Running PDC/pgcc
 Successful run
 
 Output:
-./matrix_ex_float_acc total runtime 0.131467 seconds (131.467000 milliseconds)
+./matrix_ex_float_acc total runtime 0.121726 seconds (121.726000 milliseconds)
 
 ===== STANDARD ERROR =====
-pgcc-Warning-The flag -ta has been deprecated, please use -acc and -gpu instead.
-
 MatrixMult:
      75, Generating copyin(A[:size*size]) [if not already present]
          Generating copyout(C[:size*size]) [if not already present]
