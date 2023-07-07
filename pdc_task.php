@@ -120,8 +120,7 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
-                '-acc',
-                '-ta=tesla:managed',
+                '-acc=gpu',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),
@@ -131,8 +130,7 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
-                '-acc',
-                '-ta=tesla:managed',
+                '-acc=gpu',
                 '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),

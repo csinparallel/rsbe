@@ -115,11 +115,9 @@ Running PDC/pgcc
 Successful run
 
 Output:
-./matrix_ex_float_acc total runtime 0.522188
+./matrix_ex_float_acc total runtime 0.493983
 
 ===== STANDARD ERROR =====
-pgcc-Warning-The flag -ta has been deprecated, please use -acc and -gpu instead.
-
 "matrix_ex_float_acc.c", line 85: warning: variable "A" is used before its value is set [used_before_set]
      A = (float**)MakeMatrix(size, nr, nc, A);
                                            ^
