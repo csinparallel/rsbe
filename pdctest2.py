@@ -126,21 +126,18 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning PDC/pgcc")
+    print("\n\nRunning PDC/gcc")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'matrix_ex_float_acc.c',
-        'sourcecode': ACC_CODE,
+        'sourcefilename': 'trap-omp.c',
+        'sourcecode': TRAP_OMP_C,
         'parameters': {
-            'compiler': 'pgcc',
-            'runargs': [
-                1000,
-                0
-            ],
+            'compiler': 'gcc',
+            'runargs' : '8',
+            'compileargs': '-lm -fopenmp', 
         },
     })
     display_result(result_obj)
-
 
 
 main()
