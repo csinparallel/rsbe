@@ -126,6 +126,17 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
+    print("\n\nRunning PDC/gcc long job")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'long.c',
+        'sourcecode': LONG_C,
+        'parameters': {
+            'compiler': 'gcc',
+        },
+    })
+    display_result(result_obj)
+
     print("\n\nRunning PDC/gcc")
     result_obj = run_test({
         'language_id': 'pdc',
