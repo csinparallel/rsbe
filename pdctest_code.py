@@ -19,6 +19,26 @@ int main() {
 """
 
 
+LONG_C = r"""
+#include <stdio.h>
+#include <unistd.h>
+int main() {
+  const int min = 5;
+  int n;
+  for (n = 0;  n < min*60;  n++) {
+    printf(".");
+    if (n%10 == 0)
+      printf("\n");
+    sleep(1);
+  }
+  printf("Exiting after %d minutes\n", min);
+  return (0);
+}
+"""
+
+
+
+
 TRAP_OMP_C = r"""
 #include <math.h>
 #include <stdio.h>    // printf()
@@ -733,4 +753,9 @@ int main (int argc, char **argv) {
    free(A); free(B); free(C); 
    return 0;
 }
+"""
+
+
+CHPL_CODE = r"""
+writeln("Hello, world!");
 """

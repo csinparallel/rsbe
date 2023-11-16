@@ -170,9 +170,8 @@ class PDC_Task extends Task {
 
 	/* set defaults for params pdc_*: first generic then compiler-specific*/
 	foreach(array('nhosts', 'ncores', 
-		      'compileargs', 'autocompileargs',
-		      'interpreter', 'interpreterargs',
-		      'runargs') as $name)
+		      'compileargs', 'autocompileargs', 'linkargs', 
+		      'interpreter', 'interpreterargs', 'runargs') as $name)
 	    $this->default_params["pdc_$name"] = '';
 	$cpl_default_params =
 	    $this->pdc_default_params[$this->getParam('compiler')];
@@ -250,7 +249,8 @@ class PDC_Task extends Task {
 			 $pdc['executable'],
 			 $pdc['autocompileargs'],
 			 $pdc['sourcefilename'],
-		   	 $pdc['compileargs'])) . "\n");
+		   	 $pdc['compileargs'],
+			 $pdc['linkargs'] )) . "\n");
 	fwrite($tgt, trim(pdc_flatten(array(
 		     	 $pdc['interpreter'],
 			 $pdc['interpreterargs'],
