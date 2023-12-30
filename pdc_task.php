@@ -120,8 +120,8 @@ class PDC_Task extends Task {
 	    'pdc_backend' => 'gpu', 
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
-                '-acc=gpu',
-                '-Minfo=accel',
+//                '-acc=gpu',
+//                '-Minfo=accel',
 //                '-arch=compute_61',
     	    ),
     	),

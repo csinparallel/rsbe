@@ -263,6 +263,7 @@ def main():
                 20,
                 0
             ],
+            'compileargs':  '-acc=gpu -Minfo=accel', 
         },
     })
     display_result(result_obj)
