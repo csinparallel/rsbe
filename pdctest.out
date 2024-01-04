@@ -29,7 +29,7 @@ Hello Jobe!
 
 
 
-Running PDC/gcc
+Running PDC/gcc with linkargs
 Successful run
 
 Output:
@@ -77,6 +77,21 @@ hoach
 
 
 
+Running PDC/mpi4py
+Successful run
+
+Output:
+Greetings from process 6 of 8 on csinparallel
+Greetings from process 5 of 8 on csinparallel
+Greetings from process 3 of 8 on csinparallel
+Greetings from process 0 of 8 on csinparallel
+Greetings from process 4 of 8 on csinparallel
+Greetings from process 2 of 8 on csinparallel
+Greetings from process 1 of 8 on csinparallel
+Greetings from process 7 of 8 on csinparallel
+
+
+
 Running PDC/nvcc
 Successful run
 
@@ -115,7 +130,7 @@ Running PDC/pgcc
 Successful run
 
 Output:
-./matrix_ex_float_acc total runtime 0.493983
+./matrix_ex_float_acc total runtime 0.130972 seconds (130.972000 milliseconds)
 
 ===== STANDARD ERROR =====
 "matrix_ex_float_acc.c", line 85: warning: variable "A" is used before its value is set [used_before_set]

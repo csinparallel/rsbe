@@ -126,18 +126,20 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning PDC/gcc")
+    print("\n\nRunning PDC/mpi4py")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.c',
-        'sourcecode': TRAP_OMP_C,
+        'sourcefilename': 'mpi4py_spmd.py',
+        'sourcecode': MPI4PY_SPMD_PY,
         'parameters': {
-            'compiler': 'gcc',
-            'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
+            'compiler': 'mpi4py',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 8',
+            ],
         },
     })
-    display_result(result_obj)
+    display_result(result_obj) 
 
     print("\n\nRunning PDC/gcc")
     result_obj = run_test({

@@ -423,6 +423,23 @@ int Help::score(const char *str1, const char *str2) {
 """
 
 
+MPI4PY_SPMD_PY = r"""
+from mpi4py import MPI
+
+def main():
+  comm = MPI.COMM_WORLD
+  id = comm.Get_rank() #number of the process running the code
+  numProcesses = comm.Get_size() #total number of processes running
+  myHostName = MPI.Get_processor_name() #machine name running the code
+
+  print("Greetings from process {} of {} on {}"\
+  .format(id, numProcesses, myHostName))
+
+########## Run the main function
+main()
+"""
+
+
 CUDA_DEVICE_INFO_CU = r"""
 /*
  *  Use cuda functions to print device information.

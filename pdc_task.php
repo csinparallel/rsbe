@@ -95,7 +95,9 @@ class PDC_Task extends Task {
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
+            'pdc_interpreter' => 'mpirun',
 	    'interpreter_choices' => array('mpirun', 'mpiexec'),
+            'pdc_interpreterexec' => 'python3',
     	),
     	
         'nvcc' => array(
@@ -171,7 +173,8 @@ class PDC_Task extends Task {
 	/* set defaults for params pdc_*: first generic then compiler-specific*/
 	foreach(array('nhosts', 'ncores', 
 		      'compileargs', 'autocompileargs', 'linkargs', 
-		      'interpreter', 'interpreterargs', 'runargs') as $name)
+		      'interpreter', 'interpreterargs', 'interpreterexec',
+		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = '';
 	$cpl_default_params =
 	    $this->pdc_default_params[$this->getParam('compiler')];
@@ -197,6 +200,8 @@ class PDC_Task extends Task {
 //	$this->rab_log($this->sourceFileName);
         $this->executableFileName = $this->execpdc;
 	$this->cpl = $this->getParam('compiler');
+	if ("$this->cpl" == "mpi4py")
+	   $this->cpl = '';
 
 	/* prepare first argument for the $this->execpdc command line, which
 	   will be assembled in getRunCommand() (defined in LanguageTask.php) */
@@ -217,7 +222,11 @@ class PDC_Task extends Task {
 	foreach (array_keys($this->default_params) as $key)
 	    if (substr($key, 0, 4) == "pdc_")
 	        $pdc[substr($key,4)] = $this->getParam($key);
-	$pdc['executable'] = pathinfo($pdc['sourcefilename'],PATHINFO_FILENAME);
+	if ($this->cpl == '')
+	    $pdc['executable'] = $pdc['sourcefilename'];
+	else 	
+	    $pdc['executable'] = pathinfo($pdc['sourcefilename'],
+					  PATHINFO_FILENAME);
 
 //	$this->rab_log(print_r($pdc, true));  	//DEBUG
 
@@ -243,17 +252,20 @@ class PDC_Task extends Task {
 			 $pdc['nhosts'],
 			 $pdc['ncores'],
 			 $pdc['codelen'],
-			 $pdc['sourcefilename'], 
- 			 "$this->cpl",
+			 $pdc['sourcefilename'] )) );
+	if ("$this->cpl" != '') 
+	  fwrite($tgt, pdc_flatten(array(" $this->cpl",
 			 "-o",
 			 $pdc['executable'],
 			 $pdc['autocompileargs'],
 			 $pdc['sourcefilename'],
 		   	 $pdc['compileargs'],
-			 $pdc['linkargs'] )) . "\n");
+			 $pdc['linkargs'] )) );
+	fwrite($tgt, "\n");
 	fwrite($tgt, trim(pdc_flatten(array(
 		     	 $pdc['interpreter'],
 			 $pdc['interpreterargs'],
+		     	 $pdc['interpreterexec'],
 			 "./" . $pdc['executable'],
 			 $pdc['runargs']))) . "\n");
 	fwrite($tgt, $code);
