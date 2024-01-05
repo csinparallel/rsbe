@@ -157,7 +157,8 @@ MPI_SPMD_C = r"""
  */
 
 #include <stdio.h>   // printf()
-#include "/usr/lib/openmpi-4.1.5/include/mpi.h"     // MPI functions
+/*#include "/usr/lib/openmpi-4.1.5/include/mpi.h"     // MPI functions*/
+#include <mpi.h>     // MPI functions
 
 int main(int argc, char** argv) {
     int id = -1, numProcesses = -1, length = -1;
