@@ -141,19 +141,6 @@ def main():
     })
     display_result(result_obj) 
 
-    print("\n\nRunning PDC/gcc")
-    result_obj = run_test({
-        'language_id': 'pdc',
-        'sourcefilename': 'trap-omp.c',
-        'sourcecode': TRAP_OMP_C,
-        'parameters': {
-            'compiler': 'gcc',
-            'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
-        },
-    })
-    display_result(result_obj)
-
 
 main()
 

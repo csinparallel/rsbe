@@ -133,20 +133,6 @@ Output:
 ./matrix_ex_float_acc total runtime 0.130972 seconds (130.972000 milliseconds)
 
 ===== STANDARD ERROR =====
-"matrix_ex_float_acc.c", line 85: warning: variable "A" is used before its value is set [used_before_set]
-     A = (float**)MakeMatrix(size, nr, nc, A);
-                                           ^
-
-Remark: individual warnings can be suppressed with "--diag_suppress <warning-name>"
-
-"matrix_ex_float_acc.c", line 87: warning: variable "B" is used before its value is set [used_before_set]
-     B = (float**)MakeMatrix(size, nr, nc, B);
-                                           ^
-
-"matrix_ex_float_acc.c", line 89: warning: variable "C" is used before its value is set [used_before_set]
-     C = (float**)MakeMatrix(size, nr, nc, C);
-                                           ^
-
 MatrixMult:
      75, Generating copyin(A[:size*size]) [if not already present]
          Generating copyout(C[:size*size]) [if not already present]
