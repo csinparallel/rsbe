@@ -144,7 +144,7 @@ def main():
     })
     display_result(result_obj)
 
-    print("\n\nRunning PDC/gcc")
+    print("\n\nRunning PDC/gcc with linkargs")
     result_obj = run_test({
         'language_id': 'pdc',
         'sourcefilename': 'trap-omp.c',
@@ -152,7 +152,8 @@ def main():
         'parameters': {
             'compiler': 'gcc',
             'runargs' : '8',
-            'compileargs': '-lm -fopenmp', 
+            'compileargs': '-lm', 
+            'linkargs': '-fopenmp', 
         },
     })
     display_result(result_obj)
@@ -276,7 +277,6 @@ def main():
             'compiler': 'pgcc',
             'runargs': [
                 1000,
-                20,
                 0
             ],
             'compileargs':  '-acc=gpu -Minfo=accel', 

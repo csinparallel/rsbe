@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-''' pdctest2.py - further debugging tests for PDC pseudolanguage in Jobe. 
+''' pdctest_archive.py - saved debugging tests for PDC pseudolanguage in Jobe. 
 '''
 
 from urllib.error import HTTPError
@@ -126,20 +126,16 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
-    print("\n\nRunning PDC/mpi4py")
+    print("\n\nRunning PDC/gcc long job")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'mpi4py_spmd.py',
-        'sourcecode': MPI4PY_SPMD_PY,
+        'sourcefilename': 'long.c',
+        'sourcecode': LONG_C,
         'parameters': {
-            'compiler': 'mpi4py',
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 8',
-            ],
+            'compiler': 'gcc',
         },
     })
-    display_result(result_obj) 
+    display_result(result_obj)
 
     print("\n\nRunning PDC/gcc")
     result_obj = run_test({
@@ -150,6 +146,20 @@ def main():
             'compiler': 'gcc',
             'runargs' : '8',
             'compileargs': '-lm -fopenmp', 
+        },
+    })
+    display_result(result_obj)
+
+    print("\n\nRunning PDC/gcc with linkargs")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.c',
+        'sourcecode': TRAP_OMP_C,
+        'parameters': {
+            'compiler': 'gcc',
+            'runargs' : '8',
+            'compileargs': '-lm', 
+            'linkargs': '-fopenmp', 
         },
     })
     display_result(result_obj)

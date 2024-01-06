@@ -6,5 +6,6 @@ rab_log
 .jobeport
 execpdc
 execpdc_*_local/
+execpdc_*_gcp/
 __pycache__/
 *.bu

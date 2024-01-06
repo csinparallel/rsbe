@@ -148,26 +148,13 @@ Remark: individual warnings can be suppressed with "--diag_suppress <warning-nam
                                            ^
 
 MatrixMult:
-     20, Generating copyin(A[:size-1][:size]) [if not already present]
-         Generating copyout(C[:size][:size]) [if not already present]
-         Generating copyin(B[:size][:size]) [if not already present]
-     24, Loop is parallelizable
-     26, Loop is parallelizable
+     75, Generating copyin(A[:size*size]) [if not already present]
+         Generating copyout(C[:size*size]) [if not already present]
+         Generating copyin(B[:size*size]) [if not already present]
+     79, Loop is parallelizable
+     80, Loop is parallelizable
          Generating NVIDIA GPU code
-         24, #pragma acc loop gang, vector(128) collapse(2) /* blockIdx.x threadIdx.x */
-         26,   /* blockIdx.x threadIdx.x auto-collapsed */
-         29, #pragma acc loop seq
-     29, Loop is parallelizable
-copyMatrix:
-     57, Generating copyout(A[:nr][:nc]) [if not already present]
-         Generating copyin(B[:nr][:nc]) [if not already present]
-     59, Loop is parallelizable
-     61, Loop is parallelizable
-         Generating NVIDIA GPU code
-         59, #pragma acc loop gang, vector(128) collapse(2) /* blockIdx.x threadIdx.x */
-         61,   /* blockIdx.x threadIdx.x auto-collapsed */
-main:
-     97, Generating copyin(A[:nr][:nc]) [if not already present]
-         Generating copyout(C[:nr][:nc]) [if not already present]
-         Generating copyin(B[:nr][:nc]) [if not already present]
+         79, #pragma acc loop gang, vector(128) collapse(2) /* blockIdx.x threadIdx.x */
+         80,   /* blockIdx.x threadIdx.x collapsed */
+         83, #pragma acc loop seq
 
