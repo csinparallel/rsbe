@@ -4,14 +4,14 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
-Type=forking
+Type=simple
 PIDFile=/home/rab/LOCAL/execpdc/pid_server
 Restart=always
 RestartSec=1
 User=www-data
 Group=www-data
 WorkingDirectory=/home/rab/LOCAL/execpdc/
-ExecStart=/home/rab/LOCAL/execpdc/server
+ExecStart=/home/rab/LOCAL/execpdc/server -service
 ExecStop=/usr/bin/kill -TERM $MAINPID
 
 [Install]
