@@ -203,15 +203,20 @@ class PDC_Task extends Task {
 	if ("$this->cpl" == "mpi4py")
 	   $this->cpl = '';
 
-	/* prepare first argument for the $this->execpdc command line, which
+	/* prepare first arguments for the $this->execpdc command line, which
 	   will be assembled in getRunCommand() (defined in LanguageTask.php) */
 	$this->default_params['interpreterargs'] = array(
             $this->id,
 	);
 
+	/* prepare final arguments for the $this->execpdc command line */
+	$this->default_params['runargs'] = array(
+            $this->id . "." . $this->getParam('compiler'),
+	);
+
 	/* prepare specification of the desired a PD computation (to be
 	   performed by RSBE), and store that specification in target file
-	   (i.e., second command-line argument) for $this->execpdc */
+	   (i.e., next command-line argument) for $this->execpdc */
 
 	$this->rab_log('cpl = ' . $this->cpl);
 	// add error checking for the following
@@ -275,6 +280,7 @@ class PDC_Task extends Task {
 	  implode("", array_slice(file($this->getTargetFile()), 0, 6)) . "...");
 
     }
+
 
 
     // A default name for sourcecode files
