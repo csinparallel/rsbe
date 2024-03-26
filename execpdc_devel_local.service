@@ -1,17 +1,17 @@
 [Unit]
-Description=ExecPDC server service
+Description=ExecPDC devel local service
 After=network.target
 StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-PIDFile=/home/rab/LOCAL/execpdc/pid_server
+PIDFile=/home/rab/DEVEL_LOCAL/execpdc/pid_server
 Restart=always
 RestartSec=1
 User=www-data
 Group=www-data
-WorkingDirectory=/home/rab/LOCAL/execpdc/
-ExecStart=/home/rab/LOCAL/execpdc/server -service
+WorkingDirectory=/home/rab/DEVEL_LOCAL/execpdc/
+ExecStart=/home/rab/DEVEL_LOCAL/execpdc/server -service
 ExecStop=/usr/bin/kill -TERM $MAINPID
 
 [Install]
