@@ -142,7 +142,7 @@ class PDC_Task extends Task {
 	
     public $cpl;  /* compiler */
     public $interpreter_choices;  
-    public $execpdc= "/shared/execpdc/execpdc";
+    public $execpdc= "/shared/execpdc/execpdc_client";
     
     function rab_log($msg) {
 	$log = fopen("/shared/rab_log", "a");
