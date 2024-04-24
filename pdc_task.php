@@ -44,11 +44,12 @@ class PDC_Task extends Task {
 	'gcc',
 	'mpicc',
 	'mpic++',
-//	'mpi4py',
+	'mpi4py',
 	'nvcc',
 	'nvcc++',
 	'pgcc',
 	'pgc++',
+	'chpl', 
     );
 
     public $pdc_default_params = array(
@@ -135,6 +136,16 @@ class PDC_Task extends Task {
                 '-acc=gpu',
                 '-Minfo=accel',
 //                '-arch=compute_61',
+    	    ),
+    	),
+    	
+        'chpl' => array(
+	    'pdc_backend' => 'omp', 
+	    'pdc_ncores' => '4', 
+	    'pdc_sourcefilename' => 'prog.chpl', 
+            'pdc_autocompileargs' => array(
+//                '-Wall',
+//                '-Werror',
     	    ),
     	),
     	

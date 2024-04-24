@@ -1,4 +1,4 @@
-Jobe server:  localhost:4000
+Jobe server:  localhost:4001
 Supported languages:
     c: 11.3.0
     cpp: 11.3.0
@@ -81,14 +81,14 @@ Running PDC/mpi4py
 Successful run
 
 Output:
-Greetings from process 6 of 8 on csinparallel
+Greetings from process 7 of 8 on csinparallel
 Greetings from process 5 of 8 on csinparallel
-Greetings from process 3 of 8 on csinparallel
+Greetings from process 1 of 8 on csinparallel
 Greetings from process 0 of 8 on csinparallel
+Greetings from process 3 of 8 on csinparallel
 Greetings from process 4 of 8 on csinparallel
 Greetings from process 2 of 8 on csinparallel
-Greetings from process 1 of 8 on csinparallel
-Greetings from process 7 of 8 on csinparallel
+Greetings from process 6 of 8 on csinparallel
 
 
 
@@ -130,7 +130,7 @@ Running PDC/pgcc
 Successful run
 
 Output:
-./matrix_ex_float_acc total runtime 0.130972 seconds (130.972000 milliseconds)
+./matrix_ex_float_acc total runtime 0.103907 seconds (103.907000 milliseconds)
 
 ===== STANDARD ERROR =====
 MatrixMult:
@@ -143,4 +143,36 @@ MatrixMult:
          79, #pragma acc loop gang, vector(128) collapse(2) /* blockIdx.x threadIdx.x */
          80,   /* blockIdx.x threadIdx.x collapsed */
          83, #pragma acc loop seq
+
+
+
+Running PDC/g++
+Successful run
+
+Output:
+OMP defined, threadct = 8
+With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
+
+
+
+Running PDC/chpl
+Successful run
+
+Output:
+Hello, world! (from task 1 of 16)
+Hello, world! (from task 8 of 16)
+Hello, world! (from task 6 of 16)
+Hello, world! (from task 12 of 16)
+Hello, world! (from task 14 of 16)
+Hello, world! (from task 5 of 16)
+Hello, world! (from task 3 of 16)
+Hello, world! (from task 9 of 16)
+Hello, world! (from task 0 of 16)
+Hello, world! (from task 7 of 16)
+Hello, world! (from task 10 of 16)
+Hello, world! (from task 11 of 16)
+Hello, world! (from task 15 of 16)
+Hello, world! (from task 13 of 16)
+Hello, world! (from task 2 of 16)
+Hello, world! (from task 4 of 16)
 

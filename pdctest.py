@@ -284,6 +284,32 @@ def main():
     })
     display_result(result_obj)
 
+    print("\n\nRunning PDC/g++")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.cpp',
+        'sourcecode': TRAP_OMP_CPP,
+        'parameters': {
+            'compiler': 'g++',
+            'runargs' : '8',
+            'compileargs': '-lm -fopenmp', 
+        },
+    })
+    display_result(result_obj)
+
+
+    print("\n\nRunning PDC/chpl")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'hello5-taskpar.chpl',
+        'sourcecode': CHPL_CODE,
+        'parameters': {
+            'compiler': 'chpl',
+#            'runargs' : '8',
+#            'compileargs': '-lm -fopenmp', 
+        },
+    })
+    display_result(result_obj)
 
 
 main()
