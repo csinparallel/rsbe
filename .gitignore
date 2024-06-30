@@ -9,4 +9,4 @@ execpdc_*_local/
 execpdc_*_gcp/
 __pycache__/
 *.bu
-chapel-tests/
+chapel-tests

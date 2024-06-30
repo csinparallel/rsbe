@@ -13,6 +13,8 @@ Group=www-data
 WorkingDirectory=/home/rab/DEVEL_LOCAL/execpdc/
 ExecStart=/home/rab/DEVEL_LOCAL/execpdc/execpdc_server -service
 ExecStop=/usr/bin/kill -TERM $MAINPID
+StandardOutput=append:/home/rab/DEVEL_LOCAL/execpdc/logs/execpdc_devel_local_stdout.log
+StandardError=append:/home/rab/DEVEL_LOCAL/execpdc/logs/execpdc_devel_local_stderr.log
 
 [Install]
 WantedBy=multi-user.target
