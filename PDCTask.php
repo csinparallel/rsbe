@@ -1,4 +1,6 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+
+namespace Jobe;
 
 /* ==============================================================
  *
@@ -21,9 +23,8 @@
    The runspec for a PDC request must include a "compiler" value that
    signals a type of PD computation to perform, listed in
    $this->supported_compilers, plus standard runspec values and parameters
-   intended for desired PD computation on RSBE (vs. $this->execpdc on Jobe) */
-
-require_once('application/libraries/LanguageTask.php');
+   intended for desired PD computation on RSBE (vs. $this->execpdc on Jobe)
+*/
 
 /* helper function, a generalization of array_merge() for assembling
    command lines, etc.
@@ -38,7 +39,7 @@ function pdc_flatten($value) {
 	    return strval($value);
 }
 
-class PDC_Task extends Task {
+class PDCTask extends LanguageTask {
     public $supported_compilers = array(
     	'g++',
 	'gcc',
@@ -309,5 +310,5 @@ class PDC_Task extends Task {
         return 'EXECPDC_INPUT';
     }
 
-};
+}
 

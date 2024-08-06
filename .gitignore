@@ -10,3 +10,7 @@ execpdc_*_gcp/
 __pycache__/
 *.bu
 chapel-tests
+CTask.php
+CppTask.php
+c_task.php
+cpp_task.php
