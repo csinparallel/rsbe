@@ -126,6 +126,20 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
+    print("\n\nRunning PDC/g++")
+    result_obj = run_test({
+#        'debug': True,
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.cpp',
+        'sourcecode': TRAP_OMP_CPP,
+        'parameters': {
+            'compiler': 'g++',
+            'runargs' : '8',
+            'compileargs': '-lm -fopenmp', 
+        },
+    })
+    display_result(result_obj)
+
     print("\n\nRunning PDC/mpi4py")
     result_obj = run_test({
         'language_id': 'pdc',

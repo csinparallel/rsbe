@@ -26,18 +26,6 @@ namespace Jobe;
    intended for desired PD computation on RSBE (vs. $this->execpdc on Jobe)
 */
 
-/* helper function, a generalization of array_merge() for assembling
-   command lines, etc.
-   The argument $value may be a single value or a (possibly nested) array
-   of values.  The function returns a combined single string consisting of
-   all values in depth-first order, separated by spaces.  */
-   
-function pdc_flatten($value) {
-        if (is_array($value))
-	    return implode(' ', array_map('pdc_flatten', $value));
-	else
-	    return strval($value);
-}
 
 class PDCTask extends LanguageTask {
     public $supported_compilers = array(
@@ -206,6 +194,19 @@ class PDCTask extends LanguageTask {
         return array('echo 0.2', '/([0-9.]*)/');
     }
 
+    /* helper method pdc_flatten(), a generalization of array_merge() for 
+       assembling command lines, etc.
+       The argument $value may be a single value or a (possibly nested) array
+       of values.  The function returns a combined single string consisting of
+       all values in depth-first order, separated by spaces.  */
+
+    function pdc_flatten($value) {
+        if (is_array($value))
+	    return implode(' ', array_map(array($this, 'pdc_flatten'), $value));
+	else
+	    return strval($value);
+    }
+
     public function compile() {
 //	$code = file_get_contents($this->defaultFileName(''));
 //	$this->rab_log($code);
@@ -262,7 +263,7 @@ class PDCTask extends LanguageTask {
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
 	fwrite($tgt, $pdc['backend'] . "\n");
-	fwrite($tgt, pdc_flatten(array(
+	fwrite($tgt, $this->pdc_flatten(array(
 		         $this->id,
 #			 isset($pdc['nhosts']) ? $pdc['nhosts']: '', 
 #			 isset($pdc['ncores']) ? $pdc['ncores']: '', 
@@ -271,7 +272,7 @@ class PDCTask extends LanguageTask {
 			 $pdc['codelen'],
 			 $pdc['sourcefilename'] )) );
 	if ("$this->cpl" != '') 
-	  fwrite($tgt, pdc_flatten(array(" $this->cpl",
+	  fwrite($tgt, $this->pdc_flatten(array(" $this->cpl",
 			 "-o",
 			 $pdc['executable'],
 			 $pdc['autocompileargs'],
@@ -279,7 +280,7 @@ class PDCTask extends LanguageTask {
 		   	 $pdc['compileargs'],
 			 $pdc['linkargs'] )) );
 	fwrite($tgt, "\n");
-	fwrite($tgt, trim(pdc_flatten(array(
+	fwrite($tgt, trim($this->pdc_flatten(array(
 		     	 $pdc['interpreter'],
 			 $pdc['interpreterargs'],
 		     	 $pdc['interpreterexec'],

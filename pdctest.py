@@ -130,9 +130,11 @@ def main():
 
     print("\n\nRunning C")
     result_obj = run_test({
+#        'debug': True,
         'language_id': 'c',
         'sourcefilename': 'test.c',
-        'sourcecode': C_CODE
+        'sourcecode': C_CODE,
+        'debug': True
     })
     display_result(result_obj)
 
@@ -140,7 +142,8 @@ def main():
     result_obj = run_test({
         'language_id': 'cpp',
         'sourcefilename': 'test.cpp',
-        'sourcecode': CPP_CODE
+        'sourcecode': CPP_CODE,
+        'debug': True
     })
     display_result(result_obj)
 
