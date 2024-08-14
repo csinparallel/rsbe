@@ -191,7 +191,7 @@ class PDCTask extends LanguageTask {
     }
 
     public static function getVersionCommand() {
-        return array('echo 0.2', '/([0-9.]*)/');
+        return array('echo 1.0', '/([0-9.]*)/');
     }
 
     /* helper method pdc_flatten(), a generalization of array_merge() for 
