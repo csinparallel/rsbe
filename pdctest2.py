@@ -126,9 +126,16 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
+    print("\n\nRunning C")
+    result_obj = run_test({
+        'language_id': 'c',
+        'sourcefilename': 'test.c',
+        'sourcecode': C_CODE
+    })
+    display_result(result_obj)
+
     print("\n\nRunning PDC/g++")
     result_obj = run_test({
-#        'debug': True,
         'language_id': 'pdc',
         'sourcefilename': 'trap-omp.cpp',
         'sourcecode': TRAP_OMP_CPP,
@@ -149,7 +156,7 @@ def main():
             'compiler': 'mpi4py',
             'interpreterargs' : [
                 '-map-by node',
-                '-np 8',
+                '-np 4',
             ],
         },
     })

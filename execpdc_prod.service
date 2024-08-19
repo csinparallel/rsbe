@@ -11,7 +11,7 @@ RestartSec=1
 User=www-data
 Group=www-data
 WorkingDirectory=/home/rab/PROD/execpdc/
-ExecStart=/home/rab/PROD/execpdc/server -service
+ExecStart=/home/rab/PROD/execpdc/execpdc_server -service
 ExecStop=/usr/bin/kill -TERM $MAINPID
 
 [Install]

@@ -15,7 +15,7 @@ execpdc:
 	ln -s execpdc_$(INSTALLATION) $@
 
 execpdc/execpdc.config:
-	ln -s execpdc_$(INSTALLATION).config $@
+	ln -s ../execpdc_$(INSTALLATION).config $@
 
 .jobeport:
 	sed -n '/^PORT=/s///p' execpdc/execpdc.config
