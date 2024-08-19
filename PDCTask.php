@@ -64,6 +64,7 @@ class PDCTask extends LanguageTask {
     
         'mpicc' => array(
 	    'pdc_backend' => 'mpi', 
+	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.c', 
@@ -73,6 +74,7 @@ class PDCTask extends LanguageTask {
     	
         'mpic++' => array(
 	    'pdc_backend' => 'mpi', 
+	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
@@ -82,6 +84,7 @@ class PDCTask extends LanguageTask {
     	
         'mpi4py' => array(
 	    'pdc_backend' => 'mpi', 
+	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
@@ -91,7 +94,8 @@ class PDCTask extends LanguageTask {
     	),
     	
         'nvcc' => array(
-	    'pdc_backend' => 'gpu', 
+	    'pdc_backend' => 'gpu',
+	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
                 '-arch=native',
@@ -101,6 +105,7 @@ class PDCTask extends LanguageTask {
     	
         'nvcc++' => array(
 	    'pdc_backend' => 'gpu', 
+	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
                 '-arch=native',
@@ -110,6 +115,7 @@ class PDCTask extends LanguageTask {
     	
         'pgcc' => array(
 	    'pdc_backend' => 'gpu', 
+	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
 //                '-acc=gpu',
@@ -120,6 +126,7 @@ class PDCTask extends LanguageTask {
     	
         'pgc++' => array(
 	    'pdc_backend' => 'gpu', 
+	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-acc=gpu',
@@ -176,6 +183,7 @@ class PDCTask extends LanguageTask {
 		      'interpreter', 'interpreterargs', 'interpreterexec',
 		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = '';
+	$this->default_params['pdc_envmodule'] = 'NONE';
 	$cpl_default_params =
 	    $this->pdc_default_params[$this->getParam('compiler')];
 	foreach ($cpl_default_params as $key => $val)
@@ -262,13 +270,15 @@ class PDCTask extends LanguageTask {
 
 	/* compose execpdc input file from params and provided code */
 	$tgt = fopen($this->getTargetFile(), "w");
-	fwrite($tgt, $pdc['backend'] . "\n");
+	fwrite($tgt, $this->pdc_flatten(array(
+		         $pdc['backend'])) . "\n");
 	fwrite($tgt, $this->pdc_flatten(array(
 		         $this->id,
 #			 isset($pdc['nhosts']) ? $pdc['nhosts']: '', 
 #			 isset($pdc['ncores']) ? $pdc['ncores']: '', 
 			 $pdc['nhosts'],
 			 $pdc['ncores'],
+			 $pdc['envmodule'],
 			 $pdc['codelen'],
 			 $pdc['sourcefilename'] )) );
 	if ("$this->cpl" != '') 

@@ -126,6 +126,14 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
+    print("\n\nRunning C")
+    result_obj = run_test({
+        'language_id': 'c',
+        'sourcefilename': 'test.c',
+        'sourcecode': C_CODE
+    })
+    display_result(result_obj)
+
     print("\n\nRunning PDC/g++")
     result_obj = run_test({
 #        'debug': True,
@@ -140,20 +148,32 @@ def main():
     })
     display_result(result_obj)
 
-    print("\n\nRunning PDC/mpi4py")
+    print("\n\nRunning PDC/nvcc")
     result_obj = run_test({
         'language_id': 'pdc',
-        'sourcefilename': 'mpi4py_spmd.py',
-        'sourcecode': MPI4PY_SPMD_PY,
+        'sourcefilename': 'cuda_device_info.cu',
+        'sourcecode': CUDA_DEVICE_INFO_CU,
         'parameters': {
-            'compiler': 'mpi4py',
-            'interpreterargs' : [
-                '-map-by node',
-                '-np 8',
-            ],
+            'compiler': 'nvcc',
+            # no compileargs - note that -arch=... is automatic and server-side
+            # no runargs or interpreterargs
         },
     })
-    display_result(result_obj) 
+    display_result(result_obj)
+
+
+    print("\n\nRunning PDC/nvcc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+#        'debug': True,
+        'sourcefilename': 'cuda_dim3Demo.cu',
+        'sourcecode': CUDA_DIM3DEMO_CU,
+        'parameters': {
+            'compiler': 'nvcc',
+        },
+    })
+    display_result(result_obj)
+
 
 
 main()

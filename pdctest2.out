@@ -1,27 +1,64 @@
-Jobe server:  localhost:4000
+Jobe server:  localhost:4001
 Supported languages:
-    c: 11.3.0
-    cpp: 11.3.0
-    java: 18.0.2
-    nodejs: 12.22.9
-    octave: 6.4.0
+    c: 13.2.0
+    cpp: 13.2.0
+    java: 21.0.4
+    nodejs: 18.19.1
+    octave: 8.4.0
+    pdc: 1.0
     pascal: 3.2.2
-    pdc: 0.2
-    php: 8.1.2
-    python3: 3.10.6
+    php: 8.3.6
+    python3: 3.12.3
 
 
 
-Running PDC/mpi4py
+Running C
 Successful run
 
 Output:
-Greetings from process 6 of 8 on csinparallel
-Greetings from process 2 of 8 on csinparallel
-Greetings from process 5 of 8 on csinparallel
-Greetings from process 7 of 8 on csinparallel
-Greetings from process 1 of 8 on csinparallel
-Greetings from process 0 of 8 on csinparallel
-Greetings from process 4 of 8 on csinparallel
-Greetings from process 3 of 8 on csinparallel
+Hello world
+Isn't this fun!
+
+
+
+Running PDC/g++
+Successful run
+
+Output:
+OMP defined, threadct = 8
+With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
+
+
+
+Running PDC/nvcc
+Successful run
+
+Output:
+Device 0: "Quadro P2200" with Compute 6.1 capability
+Total amount of global memory:      5046 MBytes (5291376640 bytes)
+GPU device shared memory per block of threads on an SM: 49152 bytes
+GPU device total number of streaming multiprocessors: 10
+With  10 Multiprocessors (MPs), this device has 128 CUDA Cores/MP,
+ for total of  1280 CUDA Cores on this device.
+
+Max dimension sizes of a grid (x,y,z): (2147483647, 65535, 65535)
+Max dimension sizes of a thread block (x,y,z): (1024, 1024, 64)
+
+
+
+Running PDC/nvcc
+Successful run
+
+Output:
+Grid Dimensions : {1, 1, 1} blocks. 
+Block Dimensions : {8, 1, 1} threads.
+From each thread:
+I am thread (0, 0, 0) of block (0, 0, 0) in the grid
+I am thread (1, 0, 0) of block (0, 0, 0) in the grid
+I am thread (2, 0, 0) of block (0, 0, 0) in the grid
+I am thread (3, 0, 0) of block (0, 0, 0) in the grid
+I am thread (4, 0, 0) of block (0, 0, 0) in the grid
+I am thread (5, 0, 0) of block (0, 0, 0) in the grid
+I am thread (6, 0, 0) of block (0, 0, 0) in the grid
+I am thread (7, 0, 0) of block (0, 0, 0) in the grid
 
