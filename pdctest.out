@@ -1,14 +1,14 @@
 Jobe server:  localhost:4001
 Supported languages:
-    c: 11.3.0
-    cpp: 11.3.0
-    java: 18.0.2
-    nodejs: 12.22.9
-    octave: 6.4.0
+    c: 13.2.0
+    cpp: 13.2.0
+    java: 21.0.4
+    nodejs: 18.19.1
+    octave: 8.4.0
+    pdc: 1.0
     pascal: 3.2.2
-    pdc: 0.2
-    php: 8.1.2
-    python3: 3.10.6
+    php: 8.3.6
+    python3: 3.12.3
 
 
 
@@ -61,10 +61,14 @@ Running PDC/mpicc
 Successful run
 
 Output:
-Greetings from process #0 of 4 on csinparallel
-Greetings from process #1 of 4 on csinparallel
-Greetings from process #2 of 4 on csinparallel
-Greetings from process #3 of 4 on csinparallel
+Greetings from process #0 of 4 on rsbe-devel
+Greetings from process #1 of 4 on rsbe-devel
+Greetings from process #2 of 4 on rsbe-devel
+Greetings from process #3 of 4 on rsbe-devel
+
+===== STANDARD ERROR =====
+Loading openmpi-4.1.6
+  Loading requirement: cuda-11.8.0
 
 
 
@@ -75,20 +79,28 @@ Output:
 maximal score is 5, achieved by ligands 
 hoach 
 
+===== STANDARD ERROR =====
+Loading openmpi-4.1.6
+  Loading requirement: cuda-11.8.0
+
 
 
 Running PDC/mpi4py
 Successful run
 
 Output:
-Greetings from process 7 of 8 on csinparallel
-Greetings from process 5 of 8 on csinparallel
-Greetings from process 1 of 8 on csinparallel
-Greetings from process 0 of 8 on csinparallel
-Greetings from process 3 of 8 on csinparallel
-Greetings from process 4 of 8 on csinparallel
-Greetings from process 2 of 8 on csinparallel
-Greetings from process 6 of 8 on csinparallel
+Greetings from process 1 of 8 on rsbe-devel
+Greetings from process 3 of 8 on rsbe-devel
+Greetings from process 4 of 8 on rsbe-devel
+Greetings from process 5 of 8 on rsbe-devel
+Greetings from process 6 of 8 on rsbe-devel
+Greetings from process 7 of 8 on rsbe-devel
+Greetings from process 0 of 8 on rsbe-devel
+Greetings from process 2 of 8 on rsbe-devel
+
+===== STANDARD ERROR =====
+Loading openmpi-4.1.6
+  Loading requirement: cuda-11.8.0
 
 
 
@@ -97,7 +109,7 @@ Successful run
 
 Output:
 Device 0: "Quadro P2200" with Compute 6.1 capability
-Total amount of global memory:      5053 MBytes (5298716672 bytes)
+Total amount of global memory:      5046 MBytes (5291376640 bytes)
 GPU device shared memory per block of threads on an SM: 49152 bytes
 GPU device total number of streaming multiprocessors: 10
 With  10 Multiprocessors (MPs), this device has 128 CUDA Cores/MP,
@@ -130,7 +142,7 @@ Running PDC/pgcc
 Successful run
 
 Output:
-./matrix_ex_float_acc total runtime 0.103907 seconds (103.907000 milliseconds)
+./matrix_ex_float_acc total runtime 0.110257 seconds (110.257000 milliseconds)
 
 ===== STANDARD ERROR =====
 MatrixMult:
@@ -152,27 +164,4 @@ Successful run
 Output:
 OMP defined, threadct = 8
 With n = 1048576 trapezoids, our estimate of the integral from 0 to 3.14159 is 2
-
-
-
-Running PDC/chpl
-Successful run
-
-Output:
-Hello, world! (from task 1 of 16)
-Hello, world! (from task 8 of 16)
-Hello, world! (from task 6 of 16)
-Hello, world! (from task 12 of 16)
-Hello, world! (from task 14 of 16)
-Hello, world! (from task 5 of 16)
-Hello, world! (from task 3 of 16)
-Hello, world! (from task 9 of 16)
-Hello, world! (from task 0 of 16)
-Hello, world! (from task 7 of 16)
-Hello, world! (from task 10 of 16)
-Hello, world! (from task 11 of 16)
-Hello, world! (from task 15 of 16)
-Hello, world! (from task 13 of 16)
-Hello, world! (from task 2 of 16)
-Hello, world! (from task 4 of 16)
 

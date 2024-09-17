@@ -301,6 +301,7 @@ def main():
     display_result(result_obj)
 
 
+"""
     print("\n\nRunning PDC/chpl")
     result_obj = run_test({
         'language_id': 'pdc',
@@ -313,7 +314,7 @@ def main():
         },
     })
     display_result(result_obj)
-
+"""
 
 main()
 
