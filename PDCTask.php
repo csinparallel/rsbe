@@ -188,6 +188,16 @@ class PDCTask extends LanguageTask {
 	    $this->pdc_default_params[$this->getParam('compiler')];
 	foreach ($cpl_default_params as $key => $val)
 	    $this->default_params[$key] = $val;
+	$config_lines = file("/shared/execpdc/execpdc.config",
+	                         FILE_IGNORE_NEW_LINES);
+	if ($config_lines == false)
+	    $this->rab_log("could not read execpdc/execpdc.config");
+	else
+	    foreach ($config_lines as $line)
+	        if (!strncmp($line, "ENVMOD_", 7))
+		    $this->rab_log($line);
+/*	$config_lines = file("/shared/PDCTask.php");
+	$this->rab_log($config_lines[0]); */
 //	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
 
 	if (isset($cpl_default_params['interpreter_choices']) &&
