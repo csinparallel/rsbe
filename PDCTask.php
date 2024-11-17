@@ -64,7 +64,7 @@ class PDCTask extends LanguageTask {
     
         'mpicc' => array(
 	    'pdc_backend' => 'mpi', 
-	    'pdc_envmodule' => 'openmpi-4.1.6',
+#	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.c', 
@@ -184,20 +184,22 @@ class PDCTask extends LanguageTask {
 		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = '';
 	$this->default_params['pdc_envmodule'] = 'NONE';
-	$cpl_default_params =
-	    $this->pdc_default_params[$this->getParam('compiler')];
-	foreach ($cpl_default_params as $key => $val)
-	    $this->default_params[$key] = $val;
 	$config_lines = file("/shared/execpdc/execpdc.config",
 	                         FILE_IGNORE_NEW_LINES);
 	if ($config_lines == false)
 	    $this->rab_log("could not read execpdc/execpdc.config");
 	else
 	    foreach ($config_lines as $line)
-	        if (!strncmp($line, "ENVMOD_", 7))
-		    $this->rab_log($line);
-/*	$config_lines = file("/shared/PDCTask.php");
-	$this->rab_log($config_lines[0]); */
+	        if (!strncmp($line, "ENVMOD=", 7)) {
+		    $this->rab_log(print_r(explode(" ", substr($line,7)), true));
+		    $line_array = explode(" ", substr($line,7));
+		    $this->default_params['pdc_envmodule'] = $line_array[0];
+		    $this->rab_log(print_r($this->default_params, true));
+		}
+	$cpl_default_params =
+	    $this->pdc_default_params[$this->getParam('compiler')];
+	foreach ($cpl_default_params as $key => $val)
+	    $this->default_params[$key] = $val;
 //	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
 
 	if (isset($cpl_default_params['interpreter_choices']) &&
