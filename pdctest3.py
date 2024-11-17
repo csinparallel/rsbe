@@ -142,5 +142,33 @@ def main():
     display_result(result_obj)
 
 
+    print("\n\nRunning PDC/mpi4py")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'mpi4py_spmd.py',
+        'sourcecode': MPI4PY_SPMD_PY,
+        'parameters': {
+            'compiler': 'mpi4py',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 8',
+            ],
+        },
+    })
+    display_result(result_obj) 
+
+
+    print("\n\nRunning PDC/nvcc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'cuda_dim3Demo.cu',
+        'sourcecode': CUDA_DIM3DEMO_CU,
+        'parameters': {
+            'compiler': 'nvcc',
+        },
+    })
+    display_result(result_obj)
+
+
 main()
 

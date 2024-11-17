@@ -84,7 +84,7 @@ class PDCTask extends LanguageTask {
     	
         'mpi4py' => array(
 	    'pdc_backend' => 'mpi', 
-	    'pdc_envmodule' => 'openmpi-4.1.6',
+#	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.py', 
@@ -193,14 +193,17 @@ class PDCTask extends LanguageTask {
 	        if (!strncmp($line, "ENVMOD=", 7)) {
 		    $this->rab_log(print_r(explode(" ", substr($line,7)), true));
 		    $line_array = explode(" ", substr($line,7));
-		    $this->default_params['pdc_envmodule'] = $line_array[0];
-		    $this->rab_log(print_r($this->default_params, true));
+		    $mod_value = array_shift($line_array);
+		    foreach($line_array as $cpl_tmp)
+		        $this->pdc_default_params[$cpl_tmp]['pdc_envmodule'] = $mod_value;
+#		    $this->rab_log(print_r($this->pdc_default_params[$line_array[0]], true));
 		}
 	$cpl_default_params =
 	    $this->pdc_default_params[$this->getParam('compiler')];
 	foreach ($cpl_default_params as $key => $val)
 	    $this->default_params[$key] = $val;
 //	$this->rab_log(print_r($this->default_params['pdc_compileargs'], true));
+	$this->rab_log(print_r($this->default_params, true));
 
 	if (isset($cpl_default_params['interpreter_choices']) &&
 	        is_array($cpl_default_params['interpreter_choices']))
