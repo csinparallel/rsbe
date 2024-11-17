@@ -95,7 +95,7 @@ class PDCTask extends LanguageTask {
     	
         'nvcc' => array(
 	    'pdc_backend' => 'gpu',
-	    'pdc_envmodule' => 'nvhpc/24.7',
+#	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
                 '-arch=native',
@@ -191,11 +191,13 @@ class PDCTask extends LanguageTask {
 	else
 	    foreach ($config_lines as $line)
 	        if (!strncmp($line, "ENVMOD=", 7)) {
-		    $this->rab_log(print_r(explode(" ", substr($line,7)), true));
-		    $line_array = explode(" ", substr($line,7));
-		    $mod_value = array_shift($line_array);
-		    foreach($line_array as $cpl_tmp)
-		        $this->pdc_default_params[$cpl_tmp]['pdc_envmodule'] = $mod_value;
+		    $this->rab_log(print_r(explode(";", substr($line,7)), true));
+		    foreach (explode(";", substr($line,7)) as $subline) {
+		        $line_array = explode(" ", trim($subline));
+		    	$mod_value = array_shift($line_array);
+		    	foreach($line_array as $cpl_tmp)
+		      	    $this->pdc_default_params[$cpl_tmp]['pdc_envmodule'] = $mod_value;
+		    }
 #		    $this->rab_log(print_r($this->pdc_default_params[$line_array[0]], true));
 		}
 	$cpl_default_params =
