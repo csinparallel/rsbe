@@ -74,7 +74,7 @@ class PDCTask extends LanguageTask {
     	
         'mpic++' => array(
 	    'pdc_backend' => 'mpi', 
-	    'pdc_envmodule' => 'openmpi-4.1.6',
+#	    'pdc_envmodule' => 'openmpi-4.1.6',
 	    'pdc_nhosts' => '4', 
 	    'pdc_ncores' => '2', 
 	    'pdc_sourcefilename' => 'prog.cpp', 
@@ -105,7 +105,7 @@ class PDCTask extends LanguageTask {
     	
         'nvcc++' => array(
 	    'pdc_backend' => 'gpu', 
-	    'pdc_envmodule' => 'nvhpc/24.7',
+#	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cu', 
             'pdc_autocompileargs' => array(
                 '-arch=native',
@@ -115,7 +115,7 @@ class PDCTask extends LanguageTask {
     	
         'pgcc' => array(
 	    'pdc_backend' => 'gpu', 
-	    'pdc_envmodule' => 'nvhpc/24.7',
+#	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.c', 
             'pdc_autocompileargs' => array(
 //                '-acc=gpu',
@@ -126,7 +126,7 @@ class PDCTask extends LanguageTask {
     	
         'pgc++' => array(
 	    'pdc_backend' => 'gpu', 
-	    'pdc_envmodule' => 'nvhpc/24.7',
+#	    'pdc_envmodule' => 'nvhpc/24.7',
 	    'pdc_sourcefilename' => 'prog.cpp', 
             'pdc_autocompileargs' => array(
                 '-acc=gpu',
