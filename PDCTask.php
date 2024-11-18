@@ -177,29 +177,35 @@ class PDCTask extends LanguageTask {
 	
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
-	/* set defaults for params pdc_*: first generic then compiler-specific*/
+	/* set defaults for params pdc_* in order:
+	     1. generic defaults
+	     2. compiler-specific pdc_envmodule values from .config file
+	     3. compiler-specific values from $pdc_default_params */
+	     
 	foreach(array('nhosts', 'ncores', 
 		      'compileargs', 'autocompileargs', 'linkargs', 
 		      'interpreter', 'interpreterargs', 'interpreterexec',
 		      'runargs') as $name)
 	    $this->default_params["pdc_$name"] = '';
 	$this->default_params['pdc_envmodule'] = 'NONE';
-	$config_lines = file("/shared/execpdc/execpdc.config",
-	                         FILE_IGNORE_NEW_LINES);
-	if ($config_lines == false)
+	
+	if (!($config_lines = file("/shared/execpdc/execpdc.config",
+	                           FILE_IGNORE_NEW_LINES)))
 	    $this->rab_log("could not read execpdc/execpdc.config");
 	else
 	    foreach ($config_lines as $line)
 	        if (!strncmp($line, "ENVMOD=", 7)) {
-		    $this->rab_log(print_r(explode(";", substr($line,7)), true));
-		    foreach (explode(";", substr($line,7)) as $subline) {
-		        $line_array = explode(" ", trim($subline));
-		    	$mod_value = array_shift($line_array);
-		    	foreach($line_array as $cpl_tmp)
-		      	    $this->pdc_default_params[$cpl_tmp]['pdc_envmodule'] = $mod_value;
+		    $envmod_lists = explode(";", substr($line,7));
+//		    $this->rab_log(print_r($envmod_lists, true));
+		    foreach ($envmod_lists as $elist) {
+		        $elist_arr = explode(" ", trim($elist));
+		    	$envmod_name = array_shift($elist_arr);
+		    	foreach($elist_arr as $cpl_name)
+		      	    $this->pdc_default_params[$cpl_name]
+			        ['pdc_envmodule'] = $envmod_name;
 		    }
-#		    $this->rab_log(print_r($this->pdc_default_params[$line_array[0]], true));
 		}
+
 	$cpl_default_params =
 	    $this->pdc_default_params[$this->getParam('compiler')];
 	foreach ($cpl_default_params as $key => $val)
