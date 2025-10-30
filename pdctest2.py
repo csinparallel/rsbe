@@ -141,6 +141,34 @@ def main():
     })
     display_result(result_obj) 
 
+    print("\n\nRunning serial timeout test")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'timeout.c',
+        'sourcecode': MM_SERIAL_C_CODE,
+        'parameters': {
+            'compiler': 'gcc',
+            'runargs' : ['4096', '0'],
+            'compileargs': ['-lm', '-fopenmp'], 
+        },
+    })
+    display_result(result_obj) 
+
+    print("\n\nRunning mpicc deadlock patternlet")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'timeout.c',
+        'sourcecode': MESSAGEPASSING_DEADLOCK_MPICC_CODE,
+        'parameters': {
+            'compiler': 'mpicc',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 4',
+            ],
+        },
+    })
+    display_result(result_obj) 
+
 
 main()
 
