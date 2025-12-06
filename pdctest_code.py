@@ -826,3 +826,203 @@ coforall tid in 0..#numTasks do
 // :ref:`examples/primers/taskParallel.chpl <primers-taskParallel>`.
 //
 """
+
+
+MM_SERIAL_C_CODE = r"""
+/*
+  * Sequential version of matrix multiplication.
+  */
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <math.h>
+ #include <omp.h> // just for timing
+
+// functions from common.c
+
+// fill a given square matrix with rows of float values
+// equal to each row number
+void fillMatrix(int size, float * A) {
+  for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        A[i*size + j] = ((float)i);
+      }
+  }
+}
+
+// display a given square matrix for debugging purposes
+void showMatrix(int size, float * matrix) {
+  int i, j;
+  for (i=0; i<size; i++){
+      for (j=0; j<size; j++) {
+          printf("element [%d][%d] = %f \n",
+                  i,j, matrix[i*size + j]);
+      }
+  }
+}
+
+void debugPrintMatrix(int verbose, int size,
+                      float *matrix, const char *msg) {
+  if (verbose){
+    printf("%s \n", msg);
+    showMatrix(size, matrix);
+  }
+}
+
+// Check whether last row of result matrix is what we expect
+void verfiyCorrect(int size, float *matrix) {
+  // determine what the last row should contain
+  float lastRowValue = 0.0;
+  float maxError = 0.0;
+  float nextVal = 0.0;
+
+  for (int i=0; i<size; i++)
+      lastRowValue += i * (size-1);
+
+  for (int j=0; j<size; j++) {
+    nextVal = matrix[(size-1)*size + j];
+    maxError = fmaxf(maxError, fabs(nextVal - lastRowValue));
+  }
+  printf("max error of last row matrix C values: %f\n",
+          maxError);
+}
+
+// function declarations
+ void MatrixMult(int size, float *__restrict__ A,
+                 float *__restrict__ B,
+                 float *__restrict__ C); //
+ void getArguments(int argc, char **argv,
+                   int *size, int *verbose);
+
+ int main(int argc, char **argv) {
+
+   // default values
+   int size = 256;     // num rows, cols of square matrix
+   int verbose = 0;    // default to not printing matrices
+   //change defaults if arguments given
+   getArguments(argc, argv, &size, &verbose);
+
+   printf("matrix rows, cols = %d\n", size);
+
+   float *A; // input matrix
+   float *B; // input matrix
+   float *C; // output matrix
+
+   // Use a 'flattened' 1D array of contiguous
+   // memory for the matrices
+   // size = number of rows = number of columns
+   // in the square matrices
+   size_t num_elements = size * size * sizeof(float);
+   A = (float *)malloc(num_elements);
+   B = (float *)malloc(num_elements);
+   C = (float *)malloc(num_elements);
+
+   fillMatrix(size, A);
+   fillMatrix(size, B);
+   char msgA[32] = "matrix A after filling:";
+   debugPrintMatrix(verbose, size, A, msgA);
+
+   double startTime = omp_get_wtime();
+
+   MatrixMult(size, A, B, C);
+
+   char msgC[32] = "matrix C after MatrixMult(): ";
+   debugPrintMatrix(verbose, size, C, msgC);
+
+   double endTime = omp_get_wtime();
+
+   printf("\nTotal runtime %f seconds (%f milliseconds)\n",
+         (endTime - startTime), (endTime - startTime) * 1000);
+
+   verfiyCorrect(size, C);
+
+   free(A);
+   free(B);
+   free(C);
+   return 0;
+ }
+ ////////////////////////////////////// end main
+
+ // mutiply matrix A times matrix B, placing result in matrix C
+ void MatrixMult(int size, float *__restrict__ A,
+                 float *__restrict__ B, float *__restrict__ C)
+ {
+
+   for (int i = 0; i < size; ++i)
+   {
+     for (int j = 0; j < size; ++j)
+     {
+       float tmp = 0.;
+       for (int k = 0; k < size; ++k)
+       {
+         tmp += A[i * size + k] * B[k * size + i];
+       }
+       C[i * size + j] = tmp; // update cell of C once
+     }
+   }
+ }
+
+ void getArguments(int argc, char **argv,
+                   int *size, int *verbose) {
+   // 2 arguments optional:
+   //   size of one side of square matrix
+   //   verbose printing for debugging
+   if (argc > 3)
+   {
+     fprintf(stderr, "Use: %s [size] [verbose]\n", argv[0]);
+     exit(EXIT_FAILURE);
+   }
+
+   if (argc >= 2)
+   {
+     *size = atoi(argv[1]);
+     if (argc == 3)
+     {
+       *verbose = atoi(argv[2]);
+     }
+   }
+
+   if (*verbose)
+   {
+     printf("size of matrix side: %d\n", *size);
+   }
+ }
+"""
+
+MESSAGEPASSING_DEADLOCK_MPICC_CODE = r"""
+  #include <stdio.h>
+  #include <mpi.h>
+
+  int odd(int number) { return number % 2; }
+
+  int main(int argc, char** argv) {
+      int id = -1, numProcesses = -1;
+      int sendValue = -1, receivedValue = -1;
+      MPI_Status status;
+
+      MPI_Init(&argc, &argv);
+      MPI_Comm_rank(MPI_COMM_WORLD, &id);
+      MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
+
+      if (numProcesses > 1) {
+          sendValue = id;
+          if ( odd(id) ) {  // odd processors receive from their 'left neighbor', then send
+              MPI_Recv(&receivedValue, 1, MPI_INT, id-1, 2,
+                        MPI_COMM_WORLD, &status);
+              MPI_Send(&sendValue, 1, MPI_INT, id-1, 1, MPI_COMM_WORLD);
+
+          } else {          // even processors receive from their 'right neighbor', then send
+              MPI_Recv(&receivedValue, 1, MPI_INT, id+1, 1,
+                        MPI_COMM_WORLD, &status);
+              MPI_Send(&sendValue, 1, MPI_INT, id+1, 2, MPI_COMM_WORLD);
+          }
+
+          printf("Process %d of %d computed %d and received %d\n",
+                  id, numProcesses, sendValue, receivedValue);
+      } else if ( !id) {  // only process 0 does this part
+          printf("\nPlease run this program using -np N where N is positive and even.\n\n");
+      }
+
+      MPI_Finalize();
+      return 0;
+  }
+"""
