@@ -169,7 +169,7 @@ class PDC_Task extends Task {
 	/* most received runspec values and parameters are intended for the
 	   PD computation to perform on RSBE.  We will prepend "pdc_"
 	   to the keys of such parameters, and use them in compile() to
-	   specify the desired PD computation.  */ 
+	   specify the desired PD computation.  */
 	if ($this->sourceFileName != "")
 	   $this->params['sourcefilename']	= $this->sourceFileName;
 	$this->sourceFileName = $this->defaultFileName(''); 
@@ -202,7 +202,7 @@ class PDC_Task extends Task {
     }
 
     public static function getVersionCommand() {
-        return array('echo 0.2', '/([0-9.]*)/');
+        return array('echo 1.1 \(execpdc 1.1\)', '/(.*)/');
     }
 
     public function compile() {
@@ -222,7 +222,9 @@ class PDC_Task extends Task {
 
 	/* prepare final arguments for the $this->execpdc command line */
 	$this->default_params['runargs'] = array(
-            $this->id . "." . $this->getParam('compiler'),
+            $this->id,
+	    $this->getParam('compiler'),
+	    $this->getParam('cputime'),
 	);
 
 	/* prepare specification of the desired a PD computation (to be

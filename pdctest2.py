@@ -126,8 +126,33 @@ def main():
         print("    {}: {}".format(lang, version))
     print()
 
+    print("\n\nRunning C")
+    result_obj = run_test({
+        #'debug': True, # retain working directory after job
+        'language_id': 'c',
+        'sourcefilename': 'test.c',
+        'sourcecode': C_CODE
+    })
+    display_result(result_obj)
+
+    print("\n\nRunning PDC/gcc with linkargs")
+    result_obj = run_test({
+        #'debug': True, # retain working directory after job
+        'language_id': 'pdc',
+        'sourcefilename': 'trap-omp.c',
+        'sourcecode': TRAP_OMP_C,
+        'parameters': {
+            'compiler': 'gcc',
+            'runargs' : '8',
+            'compileargs': '-lm', 
+            'linkargs': '-fopenmp', 
+        },
+    })
+    display_result(result_obj)
+
     print("\n\nRunning PDC/mpi4py")
     result_obj = run_test({
+        #'debug': True, # retain working directory after job
         'language_id': 'pdc',
         'sourcefilename': 'mpi4py_spmd.py',
         'sourcecode': MPI4PY_SPMD_PY,
@@ -141,8 +166,10 @@ def main():
     })
     display_result(result_obj) 
 
+    """
     print("\n\nRunning serial timeout test")
     result_obj = run_test({
+        #'debug': True, # retain working directory after job
         'language_id': 'pdc',
         'sourcefilename': 'timeout.c',
         'sourcecode': MM_SERIAL_C_CODE,
@@ -156,6 +183,7 @@ def main():
 
     print("\n\nRunning mpicc deadlock patternlet")
     result_obj = run_test({
+        #'debug': True, # retain working directory after job
         'language_id': 'pdc',
         'sourcefilename': 'timeout.c',
         'sourcecode': MESSAGEPASSING_DEADLOCK_MPICC_CODE,
@@ -168,7 +196,7 @@ def main():
         },
     })
     display_result(result_obj) 
-
+    """
 
 main()
 

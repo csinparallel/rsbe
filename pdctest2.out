@@ -1,4 +1,4 @@
-Jobe server:  localhost:4000
+Jobe server:  localhost:4001
 Supported languages:
     c: 11.3.0
     cpp: 11.3.0
@@ -12,16 +12,35 @@ Supported languages:
 
 
 
+Running C
+Successful run
+
+Output:
+Hello world
+Isn't this fun!
+
+
+
+Running PDC/gcc with linkargs
+Successful run
+
+Output:
+OMP defined, threadct = 8
+With 1048576 trapezoids,  our estimate of the integral from 
+0.000000 to 3.141593 is 2.000000
+
+
+
 Running PDC/mpi4py
 Successful run
 
 Output:
-Greetings from process 6 of 8 on csinparallel
-Greetings from process 2 of 8 on csinparallel
-Greetings from process 5 of 8 on csinparallel
 Greetings from process 7 of 8 on csinparallel
-Greetings from process 1 of 8 on csinparallel
-Greetings from process 0 of 8 on csinparallel
-Greetings from process 4 of 8 on csinparallel
+Greetings from process 2 of 8 on csinparallel
 Greetings from process 3 of 8 on csinparallel
+Greetings from process 5 of 8 on csinparallel
+Greetings from process 4 of 8 on csinparallel
+Greetings from process 0 of 8 on csinparallel
+Greetings from process 6 of 8 on csinparallel
+Greetings from process 1 of 8 on csinparallel
 
