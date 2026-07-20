@@ -255,7 +255,9 @@ class PDCTask extends LanguageTask {
 
 	/* prepare final arguments for the $this->execpdc command line */
 	$this->default_params['runargs'] = array(
-            $this->id . "." . $this->getParam('compiler'),
+            $this->id,
+	    $this->getParam('compiler'),
+	    $this->getParam('cputime'),
 	);
 
 	/* prepare specification of the desired a PD computation (to be
