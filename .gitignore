@@ -7,6 +7,7 @@ rab_log
 execpdc
 execpdc_*_local/
 execpdc_*_gcp/
+execpdc_*_oldjobe/
 __pycache__/
 *.bu
 chapel-tests
