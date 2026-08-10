@@ -137,7 +137,7 @@ def main():
 
     print("\n\nRunning PDC/gcc with linkargs")
     result_obj = run_test({
-        #'debug': True, # retain working directory after job
+        'debug': True, # retain working directory after job
         'language_id': 'pdc',
         'sourcefilename': 'trap-omp.c',
         'sourcecode': TRAP_OMP_C,
@@ -166,7 +166,49 @@ def main():
     })
     display_result(result_obj) 
 
+    print("\n\nRunning PDC/nvcc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'cuda_device_info.cu',
+        'sourcecode': CUDA_DEVICE_INFO_CU,
+        'parameters': {
+            'compiler': 'nvcc',
+            # no compileargs - note that -arch=... is automatic and server-side
+            # no runargs or interpreterargs
+        },
+    })
+    display_result(result_obj)
+
+
+    print("\n\nRunning PDC/nvcc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'cuda_dim3Demo.cu',
+        'sourcecode': CUDA_DIM3DEMO_CU,
+        'parameters': {
+            'compiler': 'nvcc',
+        },
+    })
+    display_result(result_obj)
+
     """
+
+    print("\n\nRunning PDC/mpicc")
+    result_obj = run_test({
+        'language_id': 'pdc',
+        'sourcefilename': 'mpi_spmd.c',
+        'sourcecode': MPI_SPMD_C,
+        'parameters': {
+            'compiler': 'mpicc',
+            'interpreterargs' : [
+                '-map-by node',
+                '-np 4',
+            ],
+        },
+    })
+    display_result(result_obj)
+
+
     print("\n\nRunning serial timeout test")
     result_obj = run_test({
         #'debug': True, # retain working directory after job
