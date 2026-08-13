@@ -9,13 +9,13 @@ all:	execpdc_$(INSTALLATION) execpdc	execpdc/execpdc.config .jobeport
 	cd execpdc ; make
 
 execpdc_$(INSTALLATION):
-	git clone git@github.com:csinparallel/execpdc.git $@
+	git clone -b multi git@github.com:csinparallel/execpdc.git $@
 
 execpdc:
 	ln -s execpdc_$(INSTALLATION) $@
 
 execpdc/execpdc.config:
-	ln -s execpdc_$(INSTALLATION).config $@
+	ln -s ../execpdc_$(INSTALLATION).config $@
 
 .jobeport:
 	sed -n '/^PORT=/s///p' execpdc/execpdc.config
