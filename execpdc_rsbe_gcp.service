@@ -1,0 +1,18 @@
+[Unit]
+Description=ExecPDC rsbe-gcp service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+PIDFile=/home/rab/RSBE_GCP/execpdc/pid_server
+Restart=always
+RestartSec=1
+User=www-data
+Group=www-data
+WorkingDirectory=/home/rab/RSBE_GCP/execpdc/
+ExecStart=/home/rab/RSBE_GCP/execpdc/execpdc_server -service
+ExecStop=/usr/bin/kill -TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
