@@ -10,3 +10,7 @@ execpdc_*_gcp/
 __pycache__/
 *.bu
 chapel-tests
+c_task.php
+cpp_task.php
+docker_inspect.out
+pdctest2.py.earlier
