@@ -1,0 +1,23 @@
+[Unit]
+# Replace the following:
+#   <HOST> - name of host running a remote execpdc service
+#   <PORT> - port number for accessing that remote execpdc service
+Description=Permanent SSH Tunnel to <HOST>
+After=network.target
+# Wants=network.target
+
+[Service]
+Type=simple
+User=rab
+# Adjust the SSH command below to your needs:
+# For LOCAL Port Forwarding (-L local_port:destination_ip:destination_port)
+ExecStart=/usr/bin/ssh -NT -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -L172.17.0.1:<PORT>:localhost:<PORT> <HOST>
+
+# ALTERNATIVE: For REMOTE (Reverse) Port Forwarding (-R remote_port:destination_ip:destination_port)
+# ExecStart=/usr/bin/ssh -NT -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -R 8080:127.0.0.1:80 user@remote_server_ip
+
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
