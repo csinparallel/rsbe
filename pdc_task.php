@@ -174,10 +174,11 @@ class PDC_Task extends Task {
 	   $this->params['sourcefilename']	= $this->sourceFileName;
 	$this->sourceFileName = $this->defaultFileName(''); 
 	foreach ($this->params as $key => $val)
-	    if ($key != "compiler") {
+	    if (!in_array($key, array("compiler","cputime"))) {
 	        $this->params["pdc_" . $key] = $val ;
 		unset($this->params[$key]); }
         $this->default_params['compiler'] = 'g++';
+	$this->default_params['cputime'] = '10'; // TEMP
 	
 	/* TEST VALIDITY HERE - THROW EXCEPTION IF NOT IN $supported_compilers*/
 
