@@ -142,6 +142,7 @@ def main():
         'sourcefilename': 'trap-omp.c',
         'sourcecode': TRAP_OMP_C,
         'parameters': {
+            #'cputime': '7',
             'compiler': 'gcc',
             'runargs' : '8',
             'compileargs': '-lm', 
@@ -159,7 +160,8 @@ def main():
         'parameters': {
             'compiler': 'mpi4py',
             'interpreterargs' : [
-                '-map-by node',
+                #'-map-by node',
+                #'--oversubscribe',
                 '-np 8',
             ],
         },
@@ -186,6 +188,7 @@ def main():
         'sourcefilename': 'cuda_dim3Demo.cu',
         'sourcecode': CUDA_DIM3DEMO_CU,
         'parameters': {
+            #'cputime': '10',
             'compiler': 'nvcc',
         },
     })
@@ -201,7 +204,7 @@ def main():
         'parameters': {
             'compiler': 'mpicc',
             'interpreterargs' : [
-                '-map-by node',
+                #'-map-by node',
                 '-np 4',
             ],
         },
@@ -232,7 +235,7 @@ def main():
         'parameters': {
             'compiler': 'mpicc',
             'interpreterargs' : [
-                '-map-by node',
+                #'-map-by node',
                 '-np 4',
             ],
         },
