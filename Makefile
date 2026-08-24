@@ -5,7 +5,7 @@
 CWD := $(shell pwd)
 INSTALLATION := $(shell basename $(CWD) | tr A-Z a-z)
 
-all:	execpdc_$(INSTALLATION) execpdc	execpdc/execpdc.config .jobeport
+all:	execpdc_$(INSTALLATION) execpdc	execpdc/execpdc.config 
 	cd execpdc ; make
 
 execpdc_$(INSTALLATION):
@@ -17,5 +17,3 @@ execpdc:
 execpdc/execpdc.config:
 	ln -s ../execpdc_$(INSTALLATION).config $@
 
-.jobeport:
-	sed -n '/^PORT=/s///p' execpdc/execpdc.config

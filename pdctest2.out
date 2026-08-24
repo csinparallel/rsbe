@@ -25,7 +25,6 @@ Running PDC/gcc with linkargs
 Successful run
 
 Output:
-do_run_local: EXECPDC_ENVMODULE=NONE
 OMP defined, threadct = 8
 With 1048576 trapezoids,  our estimate of the integral from 
 0.000000 to 3.141593 is 2.000000
@@ -36,15 +35,14 @@ Running PDC/mpi4py
 Successful run
 
 Output:
-do_run_local: EXECPDC_ENVMODULE=NONE
-Greetings from process 7 of 8 on csinparallel
-Greetings from process 1 of 8 on csinparallel
-Greetings from process 4 of 8 on csinparallel
-Greetings from process 5 of 8 on csinparallel
-Greetings from process 6 of 8 on csinparallel
-Greetings from process 0 of 8 on csinparallel
-Greetings from process 2 of 8 on csinparallel
-Greetings from process 3 of 8 on csinparallel
+Greetings from process 2 of 8 on csinparallel-cloud
+Greetings from process 3 of 8 on csinparallel-cloud
+Greetings from process 5 of 8 on csinparallel-cloud
+Greetings from process 1 of 8 on csinparallel-cloud
+Greetings from process 7 of 8 on csinparallel-cloud
+Greetings from process 0 of 8 on csinparallel-cloud
+Greetings from process 4 of 8 on csinparallel-cloud
+Greetings from process 6 of 8 on csinparallel-cloud
 
 
 
@@ -52,7 +50,6 @@ Running PDC/nvcc
 Successful run
 
 Output:
-do_run_local: EXECPDC_ENVMODULE=nvhpc/26.5
 Device 0: "Tesla T4" with Compute 7.5 capability
 Total amount of global memory:      14913 MBytes (15637086208 bytes)
 GPU device shared memory per block of threads on an SM: 49152 bytes
@@ -69,7 +66,6 @@ Running PDC/nvcc
 Successful run
 
 Output:
-do_run_local: EXECPDC_ENVMODULE=nvhpc/26.5
 Grid Dimensions : {1, 1, 1} blocks. 
 Block Dimensions : {8, 1, 1} threads.
 From each thread:
